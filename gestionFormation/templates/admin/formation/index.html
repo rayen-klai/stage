@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link id="pagestyle" href="{% static 'assets2/css/material-dashboard.css'%}" rel="stylesheet" />
+<div class="page-wrapper">
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="page-breadcrumb">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 d-flex align-items-center">
+                          <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-chair-school fs-4"></i></a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Gestion des formation</li>
+                        </ol>
+                      </nav>
+                    <h1 class="mb-0 fw-bold">Index</h1> 
+                </div>
+                <div class="col-6">
+                  <div class="container">
+                    <div class="row justify-content-end align-items-center">
+                      <div class="col-md-6">
+                        <div class="input-group">
+                          <a href="{% url 'newFormation' %}" class="btn btn-success text-white responsive-button">Ajouter formation</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+          <div class="card-body px-0 pb-2">
+            <div class="search1">
+              <i class="fa fa-search" ></i>
+              <input type="text" id="searchInput" class="form-control responsive-search" placeholder="Search">
+            </div>
+            <div class="table-responsive p-0">
+                
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Formateur</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Formation</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre de place</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prix</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Periode</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                    {% for f in formations %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="{{ f.formateur.img.url }}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ f.formateur.last_name}} {{f.formateur.first_name}}</h6>
+                            <p class="text-xs text-secondary mb-0">{{f.formateur.email}}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{f.titre}}</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        {{f.nbp}}
+                      </td>
+                      <td class="align-middle text-center">
+                        {{f.prx}}dt
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{f.date_deb}} - {{f.date_fin}}</span>
+                      </td>
+                      <td style="text-align: center;">
+                        <a href="{% url 'detailleFormation' f.id %}" class="btn btn-outline-info btn-sm">Afficher</a> 
+                      </td>                    
+                        </div>     
+                    </td>
+                    
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      $('#tableBody tr').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
+
+
+
+  .search1 {
+    left : 1% ; 
+  position: relative;
+  box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+  width: 300px;
+}
+
+@media (max-width: 767px) {
+  .search1 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .search1 {
+    width: 90%;
+  }
+}
+
+
+.search1 input{
+
+ height: 40;
+ text-indent: 25px;
+ border: 2px solid #d6d4d4;
+}
+
+
+.search1 input:focus{
+
+ box-shadow: none;
+ border: 2px solid rgb(56, 142, 255);
+
+
+}
+
+.search1 .fa-search {
+    position: absolute;
+    top: 13px;
+    left: 4px;
+}
+
+@media (max-width: 767px) {
+    .search1 .fa-search {
+        left: 10px;
+        top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .search1 .fa-search {
+        left: 10px;
+        top: 15px;
+    }
+}
+
+
+.search1 button{
+
+ position: absolute;
+ top: 5px;
+ right: 5px;
+ height: 50px;
+ width: 110px;
+ background: blue;
+
+}
+.responsive-search {
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .responsive-search {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .responsive-search {
+        margin-top: 15px;
+    }
+}
+.responsive-button {
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .responsive-button {
+        position: static;
+        display: block;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .responsive-button {
+        margin-top: 15px;
+    }
+}
+
+</style>
+{% endblock %}

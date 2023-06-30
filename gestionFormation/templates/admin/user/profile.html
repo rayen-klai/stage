@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="page-breadcrumb">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 d-flex align-items-center">
+                      <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-chair-school fs-4"></i></a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Gestion des utilisateurs</li>
+                    </ol>
+                  </nav>
+                <h1 class="mb-0 fw-bold">Profile</h1> 
+            </div>    
+        </div>
+    </div>
+    <div class="row" id="mymodal{{user2.id}}">
+        <!-- Column -->
+        <div class="col-lg-4 col-xlg-3 col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <center class="m-t-30"> <img src="{{user2.img.url}}"
+                            class="rounded-circle" width="150" />
+                        <h4 class="card-title m-t-10">{{user2.last_name}} {{user2.first_name}}</h4>
+                        <h6 class="card-subtitle">{{user2.role}}</h6>
+                        <div class="row text-center justify-content-md-center">
+                    </center>
+                </div>
+                <div>
+                    <hr>
+                </div>
+                <div class="card-body"> <small class="text-muted">Adresse email</small>
+                    <h6>{{user2.email}}</h6> <small class="text-muted p-t-30 db">CIN</small>
+                    <h6>{{user2.cin}}</h6> 
+                    <small class="text-muted p-t-30 db">Organisme</small>
+                    <h6>{{user2.organisme}}</h6> 
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <!-- Column -->
+        <div class="col-lg-4 col-xlg-3 col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" class="form-horizontal form-material mx-2">
+                        {% csrf_token %}    
+                        <div class="form-group">
+                            <label class="col-md-12">Nom</label>
+                            <div class="col-md-12">
+                                <input type="text" name="nom" value="{{user2.last_name}}"
+                                    class="form-control form-control-line">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Prenom</label>
+                            <div class="col-md-12">
+                                <input type="text" name="prenom" value="{{user2.first_name}}"
+                                    class="form-control form-control-line">
+                            </div>
+                        </div>           
+                        <div class="form-group">
+                            <label for="example-email" class="col-md-12">Email</label>
+                            <div class="col-md-12">
+                                <input type="email"  value={{user2.email}}
+                                    class="form-control form-control-line" name="email"
+                                    id="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">CIN</label>
+                            <div class="col-md-12">
+                                <input type="text" name="cin" value={{user2.cin}}
+                                    class="form-control form-control-line">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Organisme</label>
+                            <div class="col-md-12">
+                                <input name="org" type="text" name="org"  value={{user2.organisme}}
+                                    class="form-control form-control-line">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Mot de passe</label>
+                            <div class="col-md-12">
+                                <input type="password" value="password"  name="pwd" class="form-control form-control-line">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="file" class="form-control form-control-line">
+                                Changer photo de profil
+                                <input type="file" name="file" id="file" class="form-control">
+                                </label>                                  
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <button type="submit" name="modifier" class="btn btn-success text-white">Modifier</button>
+                                <button type="submit" name="supprimer" class="btn btn-danger text-white">Supprimer</button>
+
+                            </div>
+                        </div>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </form>     
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-xlg-3 col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <center class="m-t-30">
+                        {% if user2.role == "Formateur" %}
+                        <h6 class="card-subtitle">Liste des formations encadrées par le formateur</h6>
+                        {% else %}
+                        <h6 class="card-subtitle">Liste des participations</h6>
+                        {% endif %}
+                        <div class="row text-center justify-content-md-center">
+                        </div>
+                    </center>
+                </div>
+                <div id="list-example" class="list-group">
+                    <div class="form-outline mb-0">
+                        <input placeholder="Chercher formation" class="form-control" id="inp2">
+                    </div>
+                    <div id="datatable">
+                        {% for f in formations %}
+                        <div>
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between participant-item2" href="#list-item-1" name={{u.id}}>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">{{ f.titre }}</h6>
+                                </div>
+                            </div>
+                            <div class="ms-auto me-2">
+                              <form method="post" action="{% url 'detailleFormation' f.id  %}">
+                                {% csrf_token %}
+                                {% if user2.role != "Formateur" %}
+                                <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{u.id}}" , name="btn_ats" >Attestation</button>                                   
+                                {% endif %}
+                              </div>
+                        </a>
+                    </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Column -->
+</div>
+    <!-- Row -->
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Right sidebar -->
+    <!-- ============================================================== -->
+    <!-- .right-sidebar -->
+    <!-- ============================================================== -->
+    <!-- End Right sidebar -->
+    <!-- ============================================================== -->
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#inp2').on('input', function() {
+    var searchValue = $(this).val().toLowerCase();
+    filterParticipants2(searchValue);
+  });
+  $('#inp1').on('input', function() {
+    var searchValue = $(this).val().toLowerCase();
+    filterParticipants(searchValue);
+  });
+  function filterParticipants2(searchValue) {
+    $('.participant-item2').each(function() {
+      var participantName = $(this).find('h6').text().toLowerCase();
+      if (participantName.includes(searchValue)) {
+        $(this).parent().show();  // Show matching participant
+      } else {
+        $(this).parent().hide();  // Hide non-matching participants
+      }
+    });
+  }
+  function filterParticipants(searchValue) {
+    $('.participant-item1').each(function() {
+      var participantName = $(this).find('h6').text().toLowerCase();
+      if (participantName.includes(searchValue)) {
+        $(this).parent().show();  // Show matching participant
+      } else {
+        $(this).parent().hide();  // Hide non-matching participants
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

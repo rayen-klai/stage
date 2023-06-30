@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="page-breadcrumb">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 d-flex align-items-center">
+                      <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-chair-school fs-4"></i></a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Gestion des formations></form></li>
+                    </ol>
+                  </nav>
+                <h1 class="mb-0 fw-bold">Ajouter une formation</h1> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="col-lg-8 col-xlg-9 col-md-7">
+            <div class="card-body">
+              <form method="POST" class="form-horizontal form-material mx-2">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label class="col-md-12" for="titre">Titre</label>
+                  <div class="col-md-12">
+                    <input placeholder="Titre" type="text" name="titre" class="form-control form-control-line">
+                  </div>
+                </div>
+                <div class="form-group">
+            <label class="col-md-12" for="formateur">Formateur</label>
+            <div class="col-md-12">
+              <select name="formateur" class="form-control form-control-line">
+                <option value="0">Selectionner un formateur</option>
+                {% for user1 in users %}
+                {% if user1.role == "Formateur" %}
+                <option value="{{user1.id}}">{{user1.last_name}} {{user1.first_name}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            </div>
+          </div>
+                <div class="form-group">
+                  <label class="col-md-12" for="nombrePlace">Nombre de place</label>
+                  <div class="col-md-12">
+                    <input type="text" name="nombrePlace" placeholder="Nombre de place" class="form-control form-control-line">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-12" for="prix">Prix</label>
+                  <div class="col-md-12">
+                    <input type="text" name="prix" placeholder="Prix" class="form-control form-control-line">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-12" for="dateDebut">Date de début</label>
+                  <div class="col-md-12">
+                    <input type="date" name="dateDebut" id="dateDebut" class="form-control form-control-line">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-12" for="dateFin">Date de fin</label>
+                  <div class="col-md-12">
+                    <input type="date" name="dateFin" id="dateFin" class="form-control form-control-line">
+                  </div>
+                </div>
+                <div class="form-group" align="left">
+                  <div class="col-sm-12">
+                    <button type="submit" class="btn btn-success text-white">Ajouter</button>
+                </div>
+                </div> 
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %} 
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+        <!-- Column -->
+    </div>
+</div>
+</div>
+<script>
+  // Get current date
+  var currentDate = new Date().toISOString().slice(0, 10);
+
+  // Set initial value for dateDebut field
+  document.getElementById('dateDebut').value = currentDate;
+
+  // Set initial value for dateFin field
+  document.getElementById('dateFin').value = currentDate;
+</script>
+{% endblock %}

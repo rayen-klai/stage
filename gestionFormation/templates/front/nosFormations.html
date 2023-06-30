@@ -1,0 +1,173 @@
+{% extends 'baseclient.html' %}
+{% load static %}
+{% load custom_filter %}
+{% block content %}
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+     <img src="{% static 'assets/images/logo1.png'%}" alt="">
+    </a>
+    <!-- Nav Menu -->
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a  style="color: #000000;"></a></li>
+        <li><a  style="color: #000000;"></a></li>
+        <li><a   style="color: #000000;"></a></li>
+        <li><a   style="color: #000000;"></a></li>
+        <li><a href="{% url 'acc' %}"  style="color: #000000;">Home</a></li>
+        <li><a href="{% url 'nosformations' %}"><b>Formations</b></a></li>
+        <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav><!-- End Nav Menu -->
+    {% if user.is_authenticated %}
+    <header class="topbar" data-navbarbg="skin6">
+      <nav class="navbar top-navbar navbar-expand-md navbar-light">
+          <div class="navbar-header" data-logobg="skin6">
+              <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                      class="mdi mdi-menu"></i></a>
+          </div>
+          <!-- ============================================================== -->
+          <!-- End Logo -->
+          <!-- ============================================================== -->
+          <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
+              <!-- ============================================================== -->
+              <!-- toggle and nav items -->
+              <!-- ============================================================== -->
+              <ul class="navbar-nav float-start me-auto">
+                  <!-- ============================================================== -->
+                  <!-- Search -->
+                  <!-- ============================================================== -->
+                 
+              </ul>
+              <!-- ============================================================== -->
+              <!-- Right side toggle and nav items -->
+              <!-- ============================================================== -->
+              <ul class="navbar-nav float-end">
+                  <!-- ============================================================== -->
+                  <!-- User profile and search -->
+                  <!-- ============================================================== -->
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="{{user.img.url}}" alt="user" class="rounded-circle" width="31">
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+                        {% if user.is_superuser %}
+                        <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                          Espace admin</a>
+                          {% endif %}  
+                        <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                              Mon Profile</a>
+                              <a class="dropdown-item" href="{% url 'part' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                                Mes participations</a>
+                             <form method="post">
+                              {% csrf_token %}
+                              <a class="dropdown-item" href="{% url 'logoutt' %}">
+                            Deconnexion</a>
+                          </form>
+
+                      </ul>
+                  </li>
+                  <!-- ============================================================== -->
+                  <!-- User profile and search -->
+                  <!-- ============================================================== -->
+              </ul>
+          </div>
+      </nav>
+  </header>
+    {% else %}
+    <a  href="{% url 'admin_login' %}" class="btn-getstarted" >Se connecter</a>
+    {% endif %}
+
+  </div>
+</header><!-- End Header -->
+<section id="team" class="team">
+
+    <div data-aos="fade" class="page-title">
+      
+        <nav class="breadcrumbs">
+          <div class="container">
+            <div class="row d-flex justify-content-center text-center">
+                <div class="col-lg-8">
+                  
+                </div>
+              </div>
+            <ol>
+              <li><a href="index.html">Home</a></li>
+              <li class="current">Formations</li>
+            </ol>
+          </div>
+        </nav>
+      </div><!-- End Page Title -->
+
+    <!-- Blog Section - Blog Page -->
+    <section id="blog" class="blog">
+      
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4 posts-list">
+          {% for f in formations %}
+          <div class="col-xl-4 col-lg-6">
+            <article>
+              <p class="post-category"></p>
+              <h2 class="title">
+                <a href="blog-details.html">{{f.titre}}</a>
+              </h2>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <img src="{{f.formateur.img.url}}" alt="" class="img-fluid post-author-img flex-shrink-0">
+                  <div class="post-meta">
+                    <p class="post-author">{{f.formateur.last_name}} {{f.formateur.first_name}}</p>
+                    <p class="post-date">
+                      <span class="widget-49-meeting-time">{{f.date_deb}} - {{f.date_fin}}</span>
+                    </p>
+                    <p class="post-date">
+                      <time datetime="2022-01-01">{{f.nbp}} places</time>
+                    </p>
+                    <p class="post-date">
+                      <span class="widget-49-meeting-time">{{f.prx}} dt</span>
+                    </p>
+                 
+                  </div>
+              
+                </div>
+                <form method="post" action="{% url 'nosformations'  %}">
+                  {% csrf_token %}
+                  {% if f.participants|get_val:request.user.id == 0 %}
+                  <button type="submit" , class="btn btn-outline-warning btn-sm" , value="{{f.id}}" , name="fr_att" >En attente</button>
+                  {% elif f.participants|get_val:request.user.id == 1 %}
+                  <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{f.id}}" , name="fr_enc" >En cours</button>
+                  {% else %}
+                  <button type="submit" , class="btn btn-outline-info btn-sm" , value="{{f.id}}" , name="fr_par" >Participer</button>
+                  {% endif %}
+                 </form>
+                
+                
+              </div>
+          
+            </article>
+            
+            
+            
+            
+          </div><!-- End post list item -->
+
+         {% endfor %}
+        </div><!-- End blog posts list -->
+
+    
+
+      </div>
+
+    </section><!-- End Blog Section -->
+
+  </main>
+  <style>
+    .btn-get-started {
+      color: #0087a5;
+      /* Add any additional styling for the button */
+    }
+  </style>
+{% endblock %}

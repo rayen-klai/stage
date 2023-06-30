@@ -1,0 +1,108 @@
+{% extends 'baseclient.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Hero Section - Home Page -->
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+      <a href="acc" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+       <img src="{% static 'assets/images/logo1.png'%}" alt="">
+      </a>
+
+      <!-- Nav Menu -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+            <li><a  style="color: #000000;"></a></li>
+        <li><a  style="color: #000000;"></a></li>
+        <li><a   style="color: #000000;"></a></li>
+        
+        <li><a   style="color: #000000;"></a></li>
+         <li><a href="{% url 'acc' %}"  style="color: #000000;"><b>Home</b></a></li>
+        <li><a href="{% url 'nosformations' %}">Formations</b></a></li>
+        <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
+    
+        </ul>
+
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav><!-- End Nav Menu -->
+      {% if user.is_authenticated %}
+      <header class="topbar" data-navbarbg="skin6">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <div class="navbar-header" data-logobg="skin6">
+                <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                        class="mdi mdi-menu"></i></a>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
+                <!-- ============================================================== -->
+                <!-- toggle and nav items -->
+                <!-- ============================================================== -->
+                <ul class="navbar-nav float-start me-auto">
+                    <!-- ============================================================== -->
+                    <!-- Search -->
+                    <!-- ============================================================== -->
+                   
+                </ul>
+                <!-- ============================================================== -->
+                <!-- Right side toggle and nav items -->
+                <!-- ============================================================== -->
+                <ul class="navbar-nav float-end">
+                    <!-- ============================================================== -->
+                    <!-- User profile and search -->
+                    <!-- ============================================================== -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{user.img.url}}" alt="user" class="rounded-circle" width="31">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+                          {% if user.is_superuser %}
+                          <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                            Espace admin</a>
+                            {% endif %}
+                          <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                                Mon Profile</a>
+                                <a class="dropdown-item" href="{% url 'part' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                                 Mes participations</a>
+                               <form method="post">
+                                {% csrf_token %}
+                                <a class="dropdown-item" href="{% url 'logoutt' %}">
+                              Deconnexion</a>
+                            </form>
+
+                        </ul>
+                    </li>
+                    <!-- ============================================================== -->
+                    <!-- User profile and search -->
+                    <!-- ============================================================== -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+      {% else %}
+      <a  href="{% url 'admin_login' %}" class="btn-getstarted" >Se connecter</a>
+      {% endif %}
+
+    </div>
+  </header><!-- End Header -->
+
+    <section id="hero" class="hero">
+        <img src="{% static 'assets3/img/bg51.jpg'%}" alt="" data-aos="fade-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10">
+          <h2 data-aos="fade-up" data-aos-delay="100">Bienvenue sur notre site web</h2>
+          <p data-aos="fade-up" data-aos-delay="200" style="color: #000000;">Créer un compte pour pouvoir participer à nos formations</p>
+        </div>
+        <div class="col-lg-5">
+          <br>
+            <input type="submit" class="btn btn-primary" value="S'inscrire">
+        </div>
+      </div>
+    </div>
+  </section><!-- End Hero Section -->
+ {% endblock %}

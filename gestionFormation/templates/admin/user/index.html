@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link id="pagestyle" href="{% static 'assets2/css/material-dashboard.css'%}" rel="stylesheet" />
+<div class="page-wrapper">
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="page-breadcrumb">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0 d-flex align-items-center">
+                          <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-chair-school fs-4"></i></a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Gestion des utilisateurs</li>
+                        </ol>
+                      </nav>
+                    <h1 class="mb-0 fw-bold">Index</h1> 
+                </div>
+                <div class="col-6">
+                  <div class="container">
+                    <div class="row justify-content-end align-items-center">
+                      <div class="col-md-6">
+                        <div class="input-group">
+                          <a href="{% url 'newFormatuer' %}" class="btn btn-success text-white responsive-button">Ajouter formateur</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+      
+                
+            </div>
+        </div>
+            <div class="card-body px-0 pb-2">
+              <div class="search1">
+                <i class="fa fa-search" ></i>
+                <input id="searchInput" type="text" class="form-control responsive-search" placeholder="Search">
+              </div>
+              <div class="table-responsive p-0">
+                <table id="userTable" class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prénom</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mail</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">CIN</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Organisme</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user1 in users %}
+                    {% if user1 != user %}
+                    <tr>
+                      <td style="max-width: 30px;" align="center">
+                        <div class="d-flex justify-content-center align-items-center px-2 py-1" style="height: 100%;">
+                          <div>
+                            <img src="{{ user1.img.url }}" class="avatar border-radius-lg" alt="user11">
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                    {{user1.last_name}}
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      {{user1.first_name}} 
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      {{user1.role}} 
+                      </td>
+                      <td class="align-middle text-center text-sm">
+  {{user1.email }}                   </td>
+                      <td class="align-middle text-center">
+                        {{user1.cin}}
+                      </td>
+                      <td class="align-middle text-center">
+  {{user1.organisme }}                   </td>
+                      <td>
+                        <a href="{% url 'profilUser' user1.id %}" class="btn btn-outline-info btn-sm"  data-bs-toggle="modal" data-bs-target="#mymodal {{user1.id}}" >Afficher</a>
+                      </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                    <!-- Ajouter d'autres lignes de données ici si nécessaire -->
+                  </tbody>
+                </table>
+                
+               
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+   const searchInput = document.getElementById('searchInput');
+
+// Get the table and all rows
+const table = document.getElementById('userTable');
+const rows = table.getElementsByTagName('tr');
+
+// Attach an event listener to the search input
+searchInput.addEventListener('input', function() {
+  const searchValue = searchInput.value.toLowerCase();
+
+  // Loop through all rows and hide/show based on the search value
+  for (let i = 0; i < rows.length; i++) {
+    const rowData = rows[i].textContent.toLowerCase();
+    if (rowData.includes(searchValue)) {
+      rows[i].style.display = '';
+    } else {
+      rows[i].style.display = 'none';
+    }
+  }
+});
+  </script>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
+
+
+
+  .search1 {
+    left : 1% ; 
+  position: relative;
+  box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+  width: 300px;
+}
+
+@media (max-width: 767px) {
+  .search1 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .search1 {
+    width: 90%;
+  }
+}
+
+
+.search1 input{
+
+ height: 40;
+ text-indent: 25px;
+ border: 2px solid #d6d4d4;
+}
+
+
+.search1 input:focus{
+
+ box-shadow: none;
+ border: 2px solid rgb(56, 142, 255);
+
+
+}
+
+.search1 .fa-search {
+    position: absolute;
+    top: 13px;
+    left: 4px;
+}
+
+@media (max-width: 767px) {
+    .search1 .fa-search {
+        left: 10px;
+        top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .search1 .fa-search {
+        left: 10px;
+        top: 15px;
+    }
+}
+
+
+.search1 button{
+
+ position: absolute;
+ top: 5px;
+ right: 5px;
+ height: 50px;
+ width: 110px;
+ background: blue;
+
+}
+.responsive-search {
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .responsive-search {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .responsive-search {
+        margin-top: 15px;
+    }
+}
+.responsive-button {
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .responsive-button {
+        position: static;
+        display: block;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 575px) {
+    .responsive-button {
+        margin-top: 15px;
+    }
+}
+
+</style>
+{% endblock %}

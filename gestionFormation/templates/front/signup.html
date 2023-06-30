@@ -1,0 +1,159 @@
+
+{% extends 'baseclient.html' %}
+{% load static %}
+{% block content %}
+<!-- ======= Header ======= -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in || Sign up from</title>
+     <!-- font awesome icons -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/styleSign.css'%}">
+    <style>
+        body {
+            background-image: url("{% static 'assets3/img/bg51.jpg'%}");
+            background-size: cover;
+            background-position: center;
+            
+        }
+  </style>
+</head>
+<header id="header" class="header fixed-top d-flex align-items-center">
+  
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+      <!-- Uncomment the line below if you also wish to use an image logo -->
+     <img src="{% static 'assets/images/logo1.png'%}" alt="">
+    </a>
+    <!-- Nav Menu -->
+    <nav id="navmenu" class="navmenu">
+      <ul>
+   
+        <li><a href="{% url 'acc' %}" class="active" style="color: #000000;">Home</a></li>
+        <li><a href="{% url 'nosformations' %}" style="color: #000000;">Formations</a></li>
+        <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
+        </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav><!-- End Nav Menu -->
+    <a   href="index.html#about"></a>
+
+  </div>
+</header><!-- End Header -->
+
+
+  <div class="container">
+<div class="row">
+  <div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form method="POST">
+          {% csrf_token %}
+          <h1 style="font-size: 35px;">Créer un compte</h1>
+          <div class="infield">
+                <input name="nom" type="text" placeholder="Nom" />
+                <label></label>
+            </div>
+            <div class="infield">
+              <input name="prenom" type="text" placeholder="Prénom" />
+              <label></label>
+          </div>
+          <div class="infield">
+            <input name="cin" type="text" placeholder="CIN" />
+            <label></label>
+        </div>
+        <div class="infield">
+          <input name="org" type="text" placeholder="Organisme" />
+          <label></label>
+      </div>
+            <div class="infield">
+                <input type="email" placeholder="Email" name="email" id="email"/>
+                <label></label>
+            </div>
+            <div class="infield">
+                <input name="pwd" id="pwd"  type="password" placeholder="Mot de passe" />
+                <label></label>
+            </div>
+            {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            <button name="signup_submit" type="submit">S'inscrire</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form method="POST">
+          {% csrf_token %}
+            <h1>Se connecter</h1>
+           <div class="infield">
+                <input type="text" placeholder="Email" name="email"/>
+                <label></label>
+            </div>
+            <div class="infield">
+                <input name="pwd" type="password" placeholder="Mot de passe" />
+                <label></label>
+            </div>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+            <a href="#" class="forgot">Mot de passe oublié ?</a>
+            <button name="signin_submit" type="submit">Se connecter</button>
+        </form>
+    </div>
+    <div class="overlay-container" id="overlayCon">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Bienvenue de nouveau</h1>
+                <p>Saisissez vos données et connectez-vous</p>
+                <button>Se connecter</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Bonjour</h1>
+                <h1>!</h1>
+                <p>Créer un compte pour pouvoir participer à nos formations</p>
+                <button>S'inscrire</button>
+            </div>
+        </div>
+        <button id="overlayBtn"></button>
+    </div>
+</div>
+</div>
+</div>
+    
+
+    
+    
+    <!-- js code -->
+    <script>
+      const container = document.getElementById('container');
+      const overlayCon = document.getElementById('overlayCon');      
+      const overlayBtn = document.getElementById('overlayBtn');
+
+      overlayBtn.addEventListener('click',()=>{
+        container.classList.toggle('right-panel-active'); 
+
+        overlayBtn.classList.remove('btnscaled');
+        window.requestAnimationFrame( ()=> {
+          overlayBtn.classList.add('btnScaled')
+        })
+      });
+
+    </script>
+
+</body>
+</html>
+
+{% endblock %}
