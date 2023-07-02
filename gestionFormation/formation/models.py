@@ -7,5 +7,5 @@ class formation(models.Model):
     prx = models.FloatField()
     date_deb = models.DateField() 
     date_fin = models.DateField() 
-    formateur = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name='formations')
+    formateur = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE, related_name='formations')
     participants = models.JSONField(default=dict)

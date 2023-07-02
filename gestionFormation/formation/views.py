@@ -7,6 +7,30 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import formation
 from user.models import Profile
+from django.http import HttpResponse
+from reportlab.pdfgn import canvas
+
+def generate_attestation(request):
+    # Créer un objet PDF canvas
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="attestation_formation.pdf"'
+    p = canvas.Canvas(response)
+
+    # Ajouter du contenu à l'attestation de formation
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(100, 700, "Attestation de formation")
+
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 650, "Nom: John Doe")
+    p.drawString(100, 630, "Formation: Python avancé")
+    p.drawString(100, 610, "Date: 1er juillet 2023")
+
+    # Terminer le document PDF
+    p.showPage()
+    p.save()
+
+    return response
+
 
 def validate_price(price_input):
     try:
@@ -69,6 +93,8 @@ def detaille(request,id):
     user_ids_enc = participants_enc.keys()
     participants_enc = [Profile.objects.get(id=key) for key in user_ids_enc]
 
+    nbpr = len(participants_enc)
+    nbpd = f.nbp -  len(participants_enc)
     if request.method == 'POST' and 'btn_acc' in request.POST:
         participants[request.POST.get('btn_acc')] = 1
         f.participants = participants
@@ -112,4 +138,4 @@ def detaille(request,id):
         f.save() 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    return render(request,'admin/formation/detaille.html',{'f' : f , 'users' : Profile.objects.all(),'par_enatt' : participants_enatt , 'par_enc' : participants_enc})
+    return render(request,'admin/formation/detaille.html',{'f' : f , 'users' : Profile.objects.all(),'par_enatt' : participants_enatt , 'par_enc' : participants_enc , 'nbpd' : nbpd , 'nbpr' : nbpr})

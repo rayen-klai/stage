@@ -1,3 +1,5 @@
+from datetime import date
+import datetime
 from django.shortcuts import redirect, render
 from django.http import HttpResponse 
 from django.contrib.auth import logout
@@ -10,6 +12,8 @@ from django.core.validators import validate_email
 from django.core.validators import RegexValidator
 from django.core.files.storage import default_storage
 from formation.models import formation
+from datetime import datetime
+from user.models import Profile
 
 def acc(request):
     return render(request,'accueill.html')
@@ -30,11 +34,13 @@ def nosformations(request):
                 formation_instance.save()
         else:
             return redirect('admin_login')
-
-    return render(request, 'front/nosFormations.html', {'formations': formation.objects.all()})
+    today = date.today().strftime("%Y-%m-%d")
+    formations = formation.objects.filter(date_deb=today)
+    return render(request, 'front/nosFormations.html', {'formations': formations})
 
 def nosformateurs(request):
-    return render(request,'front/nosFormateurs.html')
+    users = Profile.objects.filter(role='Formateur')
+    return render(request,'front/nosFormateurs.html',{'formateurs' : users})
 
 def signup(request):
     return render(request,'front/signup.html')
@@ -93,4 +99,22 @@ def profile(request):
     return render(request, 'front/form.html', context)
 
 def part(request):
-    return render(request,'front/mesParticipations.html')
+    today = date.today()
+    user2 = request.user
+    formations_list = formation.objects.all()
+    enc = []
+    ter = []
+    enatt = []
+    for form in formations_list:
+        participants = form.participants
+        if str(user2.id) in participants.keys():
+            if participants[str(user2.id)] == 0:
+                enatt.append(form) 
+            elif participants[str(user2.id)] == 1:
+                d1 = datetime.strptime(str(today), "%Y-%m-%d")
+                d2 = datetime.strptime(str(form.date_fin), "%Y-%m-%d")
+                if d2 >= d1:
+                    enc.append(form)
+                else:
+                    ter.append(form)
+    return render(request,'front/mesParticipations.html',{'enc' : enc , 'ter' : ter , 'enatt' : enatt})

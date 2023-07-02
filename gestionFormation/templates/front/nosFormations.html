@@ -1,5 +1,7 @@
 {% extends 'baseclient.html' %}
 {% load static %}
+{% load tz %}
+
 {% load custom_filter %}
 {% block content %}
 <!-- ======= Header ======= -->
@@ -105,10 +107,9 @@
 
     <!-- Blog Section - Blog Page -->
     <section id="blog" class="blog">
-      
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row gy-4 posts-list">
-          {% for f in formations %}
+          {% for f in formations %}          
           <div class="col-xl-4 col-lg-6">
             <article>
               <p class="post-category"></p>
@@ -124,7 +125,7 @@
                       <span class="widget-49-meeting-time">{{f.date_deb}} - {{f.date_fin}}</span>
                     </p>
                     <p class="post-date">
-                      <time datetime="2022-01-01">{{f.nbp}} places</time>
+                      <time datetime="2022-01-01">{{ f.nbp|subtract:f.participants }} places disponibles</time>
                     </p>
                     <p class="post-date">
                       <span class="widget-49-meeting-time">{{f.prx}} dt</span>
@@ -153,7 +154,6 @@
             
             
           </div><!-- End post list item -->
-
          {% endfor %}
         </div><!-- End blog posts list -->
 

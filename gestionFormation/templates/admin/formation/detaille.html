@@ -125,7 +125,8 @@
                             <h4 class="card-title m-t-10"> {{f.formateur.last_name}} {{f.formateur.first_name}}</h4>
                             <a  href="{% url 'profilUser' f.formateur.id %}" class="btn btn-outline-info btn-sm">Voir profile</a>
                             <div class="row text-center justify-content-md-center">
-                                
+                              <br>
+                              {{nbpr}}/{{f.nbp}}
                             </div>
                         </center>
                     </div>
@@ -166,8 +167,8 @@
                     <div class="card-body">
                         <center class="m-t-30">
                             <h6 class="card-subtitle">Liste des participants en attente</h6>
-                            <div class="row text-center justify-content-md-center">
-                            </div>
+                        {{nbpd}} places disponibles 
+
                         </center>
                     </div>
                     <div id="list-example" class="list-group">
@@ -189,7 +190,9 @@
                                 <div class="ms-auto me-2">
                                   <form method="post" action="{% url 'detailleFormation' f.id  %}">
                                     {% csrf_token %}
-                                    <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{u.id}}" , name="btn_acc" >Accepter</button>                                   
+                                    {% if nbpd != 0 %}
+                                    <button type="submit" class="btn btn-outline-success btn-sm" value="{{ u.id }}" name="btn_acc">Accepter</button>
+                                {% endif %}                                
                                   </div>
                             </a>
                         </div>
