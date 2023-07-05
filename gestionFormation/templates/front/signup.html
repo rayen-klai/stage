@@ -5,7 +5,6 @@
 <!-- ======= Header ======= -->
 
 {% load static %}
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,8 +52,8 @@
 <div class="row">
   <div class="container" id="container">
     <div class="form-container sign-up-container">
-        <form method="POST">
-          {% csrf_token %}
+      <form method="POST" id="signup-form">
+        {% csrf_token %}
           <h1 style="font-size: 35px;">Créer un compte</h1>
           <div class="infield">
                 <input name="nom" type="text" placeholder="Nom" />
@@ -80,6 +79,8 @@
                 <input name="pwd" id="pwd"  type="password" placeholder="Mot de passe" />
                 <label></label>
             </div>
+            <div  id="error-message" class="error-message">
+            </div>
             {% if messages %}
             <ul class="messages">
             {% for message in messages %}
@@ -102,6 +103,7 @@
                 <input name="pwd" type="password" placeholder="Mot de passe" />
                 <label></label>
             </div>
+           
             {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -132,10 +134,9 @@
 </div>
 </div>
 </div>
-    
-
-    
-    
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- js code -->
     <script>
       const container = document.getElementById('container');
@@ -151,9 +152,35 @@
         })
       });
 
+
+      $(document).ready(function() {
+        $('#signup-form').on('submit', function(e) {
+          e.preventDefault();
+          console.log($(this));
+          var formData = $(this).serialize();
+          console.log(formData);
+
+          $.ajaxSetup({
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+          });
+          $.ajax({
+            type: 'POST',
+            url: 'admin_login',  // Replace with the correct URL of the Django view
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+              console.log(formData);
+              if (response.success) {
+                // Redirect to the specified URL
+                window.location.href = response.redirect_url;
+              } else {
+                console.log("sds");
+                // Display the error message
+                $('#error-message').text(response.message);
+              }
+            }
+          });
+        });
+      });
     </script>
-
-</body>
-</html>
-
 {% endblock %}

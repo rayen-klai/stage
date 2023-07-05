@@ -12,6 +12,7 @@ from django.core.validators import validate_email
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
+from django.http import JsonResponse
 
 def custom_login_required(function=None):
     login_url = '/admin'  # Specify your custom login URL
@@ -36,57 +37,62 @@ def admin_login(request):
             org = request.POST.get('org')
             
             if not email or not pwd or not nom or not prenom or not cin or not org:
-                messages.error(request, "Veuillez remplir tous les champs !")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                error_message = "Veuillez remplir tous les champs !"
+                return JsonResponse({'success': False, 'message': error_message})
             
+            if Profile.objects.filter(email=email).exists():
+                error_message = "Un compte avec cet e-mail existe déjà."
+                return JsonResponse({'success': False, 'message': error_message})
+            
+            if Profile.objects.filter(cin=cin).exists():
+                error_message = "Un compte avec ce cin existe déjà."
+                return JsonResponse({'success': False, 'message': error_message})
+
             try:
                 validate_email(email)
             except ValidationError as e:
-                messages.error(request, str(e))
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                error_message = str(e)
+                return JsonResponse({'success': False, 'message': error_message})
    
-            cin_regex = RegexValidator(regex=r'^\d{8}$', message="CIN must be an 8-digit number.")
+            cin_regex = RegexValidator(regex=r'^\d{8}$', message="CIN contient 8 chiffres.")
             try:
                 cin_regex(cin)
             except ValidationError as e:
-                messages.error(request, str(e))
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                error_message = str(e)
+                return JsonResponse({'success': False, 'message': error_message})
 
-
-            
             user = Profile(email=email, first_name=nom, last_name=prenom, cin=cin, organisme=org, role='Participant',)
             user.set_password(pwd)
-            
-            # Save the user to the database
             user.save()
 
-            # Optionally, perform additional actions or redirect to a success page
-            return redirect('/formation')
+            user_obj = authenticate(request, email=email, password=pwd)
+            login(request, user_obj)
+
+            return JsonResponse({'success': True, 'redirect_url': '/formation'})
 
         if request.method == 'POST' and 'signin_submit' in request.POST:
             email = request.POST.get('email')
             pwd = request.POST.get('pwd')
             user_obj = Profile.objects.filter(email=email)
             if not user_obj.exists():
-                messages.info(request, 'Verifiez vos données')
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                error_message = 'Vérifiez vos données'
+                return JsonResponse({'success': False, 'message': error_message})
             
-
             user_obj = authenticate(request, email=email, password=pwd)
 
             if user_obj:
                 login(request, user_obj)
                 if user_obj.is_superuser:
-                    return redirect('/admin')
+                    return JsonResponse({'success': True, 'redirect_url': '/admin'})
                 else:
-                    return redirect('/formation')
+                    return JsonResponse({'success': True, 'redirect_url': '/formation'})
 
-            messages.info(request, 'Mot de passe incorrecte')
-            return redirect('admin_login')
-        return render(request, 'front/signup.html', {'messages': messages.get_messages(request)})
+            error_message = 'Mot de passe incorrect'
+            return JsonResponse({'success': False, 'message': error_message})
+
+        return render(request, 'front/signup.html')
     except Exception as e:
         print(e)
-
 
 @custom_login_required
 @staff_member_required

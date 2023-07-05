@@ -144,10 +144,10 @@
                                 </div>
                             </div>
                             <div class="ms-auto me-2">
-                              <form method="post" action="{% url 'detailleFormation' f.id  %}">
+                              <form method="post" action="{% url 'profilUser' user2.id  %}">
                                 {% csrf_token %}
                                 {% if user2.role != "Formateur" %}
-                                <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{u.id}}" , name="btn_ats" >Attestation</button>                                   
+                                <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{f.id}}" , name="btn_ats" >Attestation</button>                                   
                                 {% endif %}
                               </div>
                         </a>

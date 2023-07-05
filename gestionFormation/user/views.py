@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Profile 
@@ -9,6 +10,11 @@ from django.core.files.storage import default_storage
 from django.contrib.auth import logout
 from formation.models import formation
 # Create your views here.
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+import cv2
+import os
 
 def index(request):
     return render(request,'admin/user/index.html',{'users' : Profile.objects.all })
@@ -31,7 +37,25 @@ def profile(request,id):
         user2.delete()
         return render(request,'admin/user/index.html',{'users' : Profile.objects.all })
     
-
+    if request.method == 'POST' and 'btn_ats' in request.POST:
+        f = formation.objects.get(id=request.POST.get('btn_ats'))
+        template = cv2.imread("staticfiles/attestation_template.png")
+        nom_pre = f"{user2.last_name} {user2.first_name}"
+        frm = f"{f.titre}"
+        forma = f"{f.formateur.last_name} {f.formateur.first_name}"
+        today =date.today().strftime("%Y-%m-%d")
+        font_scale = 2  # Adjust the font scale value as per your requirement
+        thickness = 2  # Adjust the thickness of the text
+        cv2.putText(template, nom_pre, (800, 750), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,frm, (770, 950), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,forma, (870, 1215), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,today, (910, 1290), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        
+        if not os.path.exists('staticfiles/attestation/'+ frm):
+            os.makedirs('staticfiles/attestation/'+ frm)
+        
+        path = 'staticfiles/attestation/'+ frm +f'/{user2.first_name}{user2.last_name}.jpg'
+        cv2.imwrite(path,template)
 
     if request.method == 'POST' and 'modifier' in request.POST:
         email = request.POST.get('email')

@@ -1,4 +1,6 @@
+from datetime import date
 from ipaddress import summarize_address_range
+import os
 from django.shortcuts import redirect, render
 from django.http import HttpResponse 
 # Create your views here.
@@ -8,28 +10,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import formation
 from user.models import Profile
 from django.http import HttpResponse
-from reportlab.pdfgn import canvas
-
-def generate_attestation(request):
-    # Créer un objet PDF canvas
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="attestation_formation.pdf"'
-    p = canvas.Canvas(response)
-
-    # Ajouter du contenu à l'attestation de formation
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(100, 700, "Attestation de formation")
-
-    p.setFont("Helvetica", 12)
-    p.drawString(100, 650, "Nom: John Doe")
-    p.drawString(100, 630, "Formation: Python avancé")
-    p.drawString(100, 610, "Date: 1er juillet 2023")
-
-    # Terminer le document PDF
-    p.showPage()
-    p.save()
-
-    return response
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+import cv2
 
 
 def validate_price(price_input):
@@ -95,6 +79,31 @@ def detaille(request,id):
 
     nbpr = len(participants_enc)
     nbpd = f.nbp -  len(participants_enc)
+
+    if request.method == 'POST' and 'btn_sup' in request.POST:
+        f.delete()
+        return render(request,'admin/formation/index.html',{'formations' : formation.objects.all })
+
+    if request.method == 'POST' and 'btn_ats' in request.POST:
+        user = Profile.objects.get(id=request.POST.get('btn_ats'))
+        template = cv2.imread("staticfiles/attestation_template.png")
+        nom_pre = f"{user.last_name} {user.first_name}"
+        frm = f"{f.titre}"
+        forma = f"{f.formateur.last_name} {f.formateur.first_name}"
+        today =date.today().strftime("%Y-%m-%d")
+        font_scale = 2  # Adjust the font scale value as per your requirement
+        thickness = 2  # Adjust the thickness of the text
+        cv2.putText(template, nom_pre, (800, 750), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,frm, (770, 950), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,forma, (870, 1215), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        cv2.putText(template,today, (910, 1290), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), thickness, cv2.LINE_AA)
+        
+        if not os.path.exists('staticfiles/attestation/'+ frm):
+            os.makedirs('staticfiles/attestation/'+ frm)
+        
+        path = 'staticfiles/attestation/'+ frm +f'/{user.first_name}{user.last_name}.jpg'
+        cv2.imwrite(path,template)
+
     if request.method == 'POST' and 'btn_acc' in request.POST:
         participants[request.POST.get('btn_acc')] = 1
         f.participants = participants

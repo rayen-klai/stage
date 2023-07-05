@@ -20,7 +20,7 @@
   
           <li><a href="{% url 'acc' %}"  style="color: #000000;">Home</a></li>
           <li><a href="{% url 'nosformations' %}">Formations</b></a></li>
-          <li><a href="index.html#services" style="color: #000000;">Formateurs</a></li>
+          <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav><!-- End Nav Menu -->
@@ -52,7 +52,7 @@
                         <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
                             Espace admin</a>
                           {% endif %} 
-                        <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i> Mon Profile</a>
+                        <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i> Mon Profile</a>
                           <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i> Mes participations</a>
                           <form method="post">
                               {% csrf_token %}
