@@ -32,17 +32,22 @@ ALLOWED_HOSTS = []
 
 LOGOUT_REDIRECT_URL = '/admin'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 INSTALLED_APPS = [
+    'django.contrib.contenttypes',
     'user.apps.UsersConfig',
     'formation.apps.FormationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'customadmin'
+    'customadmin',
+    'crispy_forms',
+    'bootstrap4',
+    'jsonview',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +151,10 @@ AUTH_USER_MODEL = 'user.Profile'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/media')
 MEDIA_URL = '/media/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'klairayen6997@gmail.com'
+EMAIL_HOST_PASSWORD = 'hwedqbmiqfobywiz'

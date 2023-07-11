@@ -14,11 +14,27 @@ from django.core.files.storage import default_storage
 from formation.models import formation
 from datetime import datetime
 from user.models import Profile
+from datetime import date
+from django.db.models import Q
 
 def acc(request):
-    return render(request,'accueill.html')
+    today = date.today().strftime("%Y-%m-%d")
+    formations = formation.objects.filter(date_fin__gt=today)
+    users = Profile.objects.filter(role='Formateur')
+    return render(request, 'accueill.html', {'formations': formations , 'formateurs' : users })
+
 
 def nosformations(request):
+    today = date.today()
+    formations = formation.objects.all()
+    formations_filtrées = []
+    
+    for f in formations:
+        jour_calcule = f.date_deb + (f.date_fin - f.date_deb) / 2
+        
+        if today >= jour_calcule:
+            formations_filtrées.append(f)
+    print(formations_filtrées)
     if request.method == 'POST':
         if request.user.is_authenticated:
             if 'fr_par' in request.POST:
@@ -35,7 +51,8 @@ def nosformations(request):
         else:
             return redirect('admin_login')
     today = date.today().strftime("%Y-%m-%d")
-    formations = formation.objects.filter(date_deb=today)
+    formations = formation.objects.filter(date_fin__gt=today)
+    formations = formations.exclude(id__in=[f.id for f in formations_filtrées])
     return render(request, 'front/nosFormations.html', {'formations': formations})
 
 def nosformateurs(request):
@@ -44,6 +61,9 @@ def nosformateurs(request):
 
 def signup(request):
     return render(request,'front/signup.html')
+
+def reset(request):
+    return render(request,'front/reset.html')
 
 def logoutf(request):
     logout(request)

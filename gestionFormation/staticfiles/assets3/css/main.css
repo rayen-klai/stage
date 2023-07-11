@@ -318,7 +318,7 @@ section {
   }
 
   .navmenu .active:focus {
-  color: #000000;
+  color: #ffffff;
   }
 
   .navmenu .dropdown ul {
@@ -801,10 +801,10 @@ section {
 .hero {
   --color-default: #000000;
   --color-default-rgb: 255, 255, 255;
-  --color-background: #000000;
+  --color-background: #f8f4f4;
   --color-background-rgb: 0, 0, 0;
   width: 100%;
-  min-height: 100vh;
+  height: 100% ;
   position: relative;
   padding: 160px 0 80px 0;
   display: flex;

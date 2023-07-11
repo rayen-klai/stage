@@ -15,10 +15,25 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 import cv2
 import os
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+def custom_login_required(function=None):
+    login_url = '/signup'  # Specify your custom login URL
+    redirect_field_name = ''  # Specify your custom redirect field name
 
-def index(request):
-    return render(request,'admin/user/index.html',{'users' : Profile.objects.all })
+    return login_required(function, redirect_field_name=redirect_field_name, login_url=login_url)
 
+
+@custom_login_required
+@staff_member_required
+def index(request,x):
+    print(x)
+    if (x=='0'):
+        print('a')
+        return render(request,'admin/user/index.html',{'users' : Profile.objects.all() })
+    else:
+        users = Profile.objects.filter(role=x)
+        return render(request, 'admin/user/index.html', {'users': users})
 def profile(request,id):
     user2 = Profile.objects.get(id=id)    
     formations_list = formation.objects.all()
@@ -99,6 +114,8 @@ def profile(request,id):
 
 
 
+@custom_login_required
+@staff_member_required
 def addFormateur(request):
     if request.method == 'POST':    
         email = request.POST.get('email')

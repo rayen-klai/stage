@@ -12,3 +12,8 @@ def subtract(value, arg):
     user_ids_enc = participants_enc.keys()
     participants_enc = [Profile.objects.get(id=key) for key in user_ids_enc]
     return value - len(participants_enc) 
+
+
+@register.simple_tag
+def define(val=None):
+  return val

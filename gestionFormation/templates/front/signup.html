@@ -2,22 +2,26 @@
 {% extends 'baseclient.html' %}
 {% load static %}
 {% block content %}
-<!-- ======= Header ======= -->
 
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
 {% load static %}
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in || Sign up from</title>
      <!-- font awesome icons -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- css stylesheet -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+     <!-- css stylesheet -->
     <link rel="stylesheet" href="{% static 'css/styleSign.css'%}">
     <style>
         body {
-            background-image: url("{% static 'assets3/img/bg51.jpg'%}");
+            background-image: url("{% static 'assets3/img/bg8.jpg'%}");
             background-size: cover;
             background-position: center;
             
@@ -25,100 +29,48 @@
   </style>
 </head>
 <header id="header" class="header fixed-top d-flex align-items-center">
-  
-  <div class="container-fluid d-flex align-items-center justify-content-between">
-
-    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-      <!-- Uncomment the line below if you also wish to use an image logo -->
-     <img src="{% static 'assets/images/logo1.png'%}" alt="">
-    </a>
-    <!-- Nav Menu -->
-    <nav id="navmenu" class="navmenu">
-      <ul>
-   
-        <li><a href="{% url 'acc' %}" class="active" style="color: #000000;">Home</a></li>
-        <li><a href="{% url 'nosformations' %}" style="color: #000000;">Formations</a></li>
-        <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
-        </ul>
-      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-    </nav><!-- End Nav Menu -->
-    <a   href="index.html#about"></a>
-
+  <div class="container-fluid d-flex align-items-center justify-content-end"> <!-- Modifier justify-content-between en justify-content-end -->
+    <a href="{% url 'acc' %}" class="btn-getstarted">HOME</a>
   </div>
 </header><!-- End Header -->
-
 
   <div class="container">
 <div class="row">
   <div class="container" id="container">
     <div class="form-container sign-up-container">
-      <form method="POST" id="signup-form">
+      <form method="POST" id="signup-form" action="{% url 'admin_login' %}">
+        <h1>Créer un compte</h1>
         {% csrf_token %}
-          <h1 style="font-size: 35px;">Créer un compte</h1>
-          <div class="infield">
-                <input name="nom" type="text" placeholder="Nom" />
-                <label></label>
-            </div>
-            <div class="infield">
-              <input name="prenom" type="text" placeholder="Prénom" />
-              <label></label>
-          </div>
-          <div class="infield">
-            <input name="cin" type="text" placeholder="CIN" />
-            <label></label>
+        <div id="crispy-form">
+            {{ form | crispy }}
         </div>
-        <div class="infield">
-          <input name="org" type="text" placeholder="Organisme" />
-          <label></label>
-      </div>
-            <div class="infield">
-                <input type="email" placeholder="Email" name="email" id="email"/>
-                <label></label>
-            </div>
-            <div class="infield">
-                <input name="pwd" id="pwd"  type="password" placeholder="Mot de passe" />
-                <label></label>
-            </div>
-            <div  id="error-message" class="error-message">
-            </div>
-            {% if messages %}
-            <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-            </ul>
-            {% endif %}
-            <button name="signup_submit" type="submit">S'inscrire</button>
-        </form>
+        <span id="first_name" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <span id="last_name" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <span id="cin" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <span id="organisme" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <span id="email" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <span id="pwd" style="display: block; color: red; font-size: 14px; margin-top: 5px;"></span>
+        <br>
+        <button name="signup_submit" id="signup_submit" type="submit">Créer un compte</button>
+    </form>
+    
     </div>
     <div class="form-container sign-in-container">
-        <form method="POST">
+      <form method="POST" id="signin-form" action="{% url 'admin_login' %}">
           {% csrf_token %}
-            <h1>Se connecter</h1>
-           <div class="infield">
-                <input type="text" placeholder="Email" name="email"/>
-                <label></label>
+            <h1>Se connecter</h1>  
+            <div id="crispy-form">
+              {{ form2 |crispy }}
             </div>
-            <div class="infield">
-                <input name="pwd" type="password" placeholder="Mot de passe" />
-                <label></label>
-            </div>
-           
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-            <a href="#" class="forgot">Mot de passe oublié ?</a>
+            <a href="{% url 'reset_password' %}" class="forgot">Mot de passe oublié ?</a>
             <button name="signin_submit" type="submit">Se connecter</button>
         </form>
     </div>
     <div class="overlay-container" id="overlayCon">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
-                <h1>Bienvenue de nouveau</h1>
+                <h1>Bienvenue </h1>
+                <h1>de nouveau</h1>
                 <p>Saisissez vos données et connectez-vous</p>
                 <button>Se connecter</button>
             </div>
@@ -136,51 +88,69 @@
 </div>
 </body>
 </html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- js code -->
-    <script>
-      const container = document.getElementById('container');
-      const overlayCon = document.getElementById('overlayCon');      
-      const overlayBtn = document.getElementById('overlayBtn');
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  const container = document.getElementById('container');
+  const overlayCon = document.getElementById('overlayCon');      
+  const overlayBtn = document.getElementById('overlayBtn');
 
-      overlayBtn.addEventListener('click',()=>{
-        container.classList.toggle('right-panel-active'); 
+  overlayBtn.addEventListener('click', () => {
+    container.classList.toggle('right-panel-active'); 
 
-        overlayBtn.classList.remove('btnscaled');
-        window.requestAnimationFrame( ()=> {
-          overlayBtn.classList.add('btnScaled')
-        })
-      });
+    overlayBtn.classList.remove('btnscaled');
+    window.requestAnimationFrame(() => {
+      overlayBtn.classList.add('btnScaled');
+    });
+  });
+
+  $(document).on('submit', '#signup-form', function(event) {
+  event.preventDefault();
+  $.ajax({
+    url: "{% url 'admin_login' %}",
+    type: 'POST',
+    dataType: 'json',
+    data: $('#signup-form').serialize(),
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+    success: function(response) {
+      var success = response['success'];
+      if (success) {
+        window.location.href = "/formation";
+      } else {
+        document.getElementById('first_name').innerHTML = ''
+        document.getElementById('last_name').innerHTML = ''
+        document.getElementById('cin').innerHTML = ''
+        document.getElementById('organisme').innerHTML = ''
+        document.getElementById('email').innerHTML = ''
+
+        
+        var fieldErrors = JSON.parse(response['field_errors']);
+
+      $.each(fieldErrors, function(fieldName, errorMessages) {
+        console.log(fieldName);
+        var fieldElement = $('#' + fieldName);
+        
+        // Remove any existing error messages for the field
+        fieldElement.next('.error-message').remove();
+
+        // Create a span element and set the error message as its text content
+        var errorElement = $('<span>').addClass('error-message');
+
+        
+        var fnf = fieldErrors[fieldName][0].message;
+        console.log(fnf);
+        document.getElementById(fieldName).innerHTML = fnf
+
+        // Append the error span after the field element
+        fieldElement.after(errorElement);
+            });}
+    },
+    error: function(xhr, status, error) {
+      alert('Error: ' + error);
+    }
+  });
+});
 
 
-      $(document).ready(function() {
-        $('#signup-form').on('submit', function(e) {
-          e.preventDefault();
-          console.log($(this));
-          var formData = $(this).serialize();
-          console.log(formData);
+</script>
 
-          $.ajaxSetup({
-            headers: { "X-CSRFToken": "{{ csrf_token }}" }
-          });
-          $.ajax({
-            type: 'POST',
-            url: 'admin_login',  // Replace with the correct URL of the Django view
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-              console.log(formData);
-              if (response.success) {
-                // Redirect to the specified URL
-                window.location.href = response.redirect_url;
-              } else {
-                console.log("sds");
-                // Display the error message
-                $('#error-message').text(response.message);
-              }
-            }
-          });
-        });
-      });
-    </script>
 {% endblock %}

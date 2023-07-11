@@ -1,5 +1,7 @@
 {% extends 'baseclient.html' %}
 {% load static %}
+{% load tz %}
+{% load custom_filter %}
 {% block content %}
 
 <!-- Hero Section - Home Page -->
@@ -9,20 +11,13 @@
 
       <a href="acc" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-       <img src="{% static 'assets/images/logo1.png'%}" alt="">
       </a>
 
       <!-- Nav Menu -->
       <nav id="navmenu" class="navmenu">
         <ul>
-            <li><a  style="color: #000000;"></a></li>
-        <li><a  style="color: #000000;"></a></li>
-        <li><a   style="color: #000000;"></a></li>
-        
-        <li><a   style="color: #000000;"></a></li>
-         <li><a href="{% url 'acc' %}"  style="color: #000000;"><b>Home</b></a></li>
+         <li><a href="{% url 'acc' %}" ><b>Home</b></a></li>
         <li><a href="{% url 'nosformations' %}">Formations</b></a></li>
-        <li><a href="{% url 'nosformateurs' %}" style="color: #000000;">Formateurs</a></li>
     
         </ul>
 
@@ -90,19 +85,127 @@
     </div>
   </header><!-- End Header -->
 
+  
+  <main id="main">
+
     <section id="hero" class="hero">
-        <img src="{% static 'assets3/img/bg51.jpg'%}" alt="" data-aos="fade-in">
+  
+      <img src="{% static 'bg5.jpg' %}" alt="" data-aos="fade-in">
+
     <div class="container">
       <div class="row">
         <div class="col-lg-10">
-          <h2 data-aos="fade-up" data-aos-delay="100">Bienvenue sur notre site web</h2>
-          <p data-aos="fade-up" data-aos-delay="200" style="color: #000000;">Créer un compte pour pouvoir participer à nos formations</p>
+          <br>
+          <br>
+          <h2 data-aos="fade-up" data-aos-delay="100" style="color: #fff;">Bienvenue sur notre application web</h2>
+          <p data-aos="fade-up" data-aos-delay="200" style="color: #fff;">Créer un compte pour pouvoir participer à nos formations</p>
         </div>
         <div class="col-lg-5">
           <br>
-            <input type="submit" class="btn btn-primary" value="S'inscrire">
+            <a  href="{% url 'admin_login' %}" class="btn btn-primary" >S'inscrire</a>
+
         </div>
       </div>
+      
     </div>
   </section><!-- End Hero Section -->
+  
+
+  
+  <section id="about" class="about">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Nos formations</h2>
+      <p>Nos formations sont dispensées par des experts du domaine, qui partagent leur expertise et leur expérience pour vous guider tout au long de votre parcours d'apprentissage.</p>
+    </div><!-- End Section Title -->
+
+    <div class="slide-container swiper">
+      <div class="slide-content">
+          <div class="card-wrapper swiper-wrapper">
+            {% for f in formations %}
+              <div class="card swiper-slide">
+                  <div class="image-content">
+                      <span class="overlay"></span>
+  
+                      <div class="card-image">
+                          <img src="{{f.formateur.img.url}}" alt="" class="card-img">
+                      </div>
+                  </div>
+  
+                  <div class="card-content">
+                      <h2 class="name">{{f.formateur.last_name}} {{f.formateur.first_name}}</h2>
+                      <p class="description">{{f.titre}}</p>
+                      <p class="post-date">
+                        <span class="widget-49-meeting-time">{{f.date_deb}} - {{f.date_fin}}</span>
+                      </p>
+                      <p class="post-date">
+                        <time datetime="2022-01-01">{{ f.nbp|subtract:f.participants }} places disponibles</time>
+                      </p>
+                      <p class="post-date">
+                        <span class="widget-49-meeting-time">{{f.prx}} dt</span>
+                      </p>
+                      <br>
+                      </div>
+              </div>
+              {% endfor %}
+              
+          </div>
+      </div>
+  
+      <div class="swiper-button-next swiper-navBtn"></div>
+      <div class="swiper-button-prev swiper-navBtn"></div>
+      <div class="swiper-pagination"></div>
+  </div> 
+      <!-- Swiper JS -->
+      <script src="{%  static 'js/swiper-bundle.min.js'  %}"></script>
+  
+      <!-- JavaScript -->
+      <script src="{%  static 'js/script.js'  %}"></script>
+      
+      <link href="{% static 'css2/style.css' %}" rel="stylesheet">
+  
+      <link href="{% static 'css2/swiper-bundle.min.css' %}" rel="stylesheet">
+  
+  </section>
+  <section id="team" class="team">
+
+    <!--  Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Nos formateurs</h2>
+      <p>Découvrez nos formateurs qualifiés prêts à partager leur expertise avec vous !</p>
+    </div><!-- End Section Title -->
+
+    <div class="container">
+
+      <div class="row gy-5">
+
+        {% for u in formateurs %}
+        <div class="col-lg-4 col-md-6 member" data-aos="fade-up" data-aos-delay="100">
+          <div class="member-img">
+            <img src="{{u.img.url}}" class="img-fluid" alt="">
+          </div>
+          <div class="member-info text-center">
+            <h4>{{u.last_name}} {{u.first_name}}</h4>
+          </div>
+        </div><!-- End Team Member -->
+        {% endfor %}
+          
+      </div>
+
+    </div>
+
+  </section><!-- End Team Section -->
+
+  </main>
+ 
+
+    <div class="container copyright text-center mt-4">
+      <p>&copy; <span>Copyright</span> <strong class="px-1">CNI</strong> <span>Tous droits réservés</span></p>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+      </div>
+    </div>
+
  {% endblock %}

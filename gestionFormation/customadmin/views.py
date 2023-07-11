@@ -13,6 +13,14 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .forms import SignupForm,SigninForm
+from jsonview.decorators import json_view
+from django.template.context_processors import csrf
+from crispy_forms.utils import render_crispy_form
+from django.contrib.auth.hashers import make_password
+from gestionFormation.backends import EmailBackend
+
 
 def custom_login_required(function=None):
     login_url = '/admin'  # Specify your custom login URL
@@ -20,79 +28,63 @@ def custom_login_required(function=None):
 
     return login_required(function, redirect_field_name=redirect_field_name, login_url=login_url)
 
+
+
+from django.forms.utils import ErrorDict
+
+"""
 def admin_login(request):
-    try:
-        if request.user.is_authenticated:
-            if request.user.is_superuser:
-                return redirect('/admin')
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.password = make_password(form.cleaned_data['password'])
+
+            # Save the user object
+            user.save() 
+            return JsonResponse({'success': True})
+        else:
+            # Return the form errors as JSON response
+            field_errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'field_errors': field_errors})
+    else:
+        form = SignupForm()
+    return render(request, 'front/signup.html', {'form': form})
+"""
+from django.http import JsonResponse
+
+def admin_login(request):
+    form2 = SigninForm()
+    form = SignupForm()
+    if request.method == 'POST':
+        if 'signin_submit' in request.POST:
+            form2 = SigninForm(request.POST)
+            if form2.is_valid():
+                email = form2.cleaned_data['email']
+                password = form2.cleaned_data['password']
+                user = authenticate(request, email=email, password=password)
+                if user is not None:
+                    login(request, user)
+                    if user.is_superuser:
+                        return redirect('/admin')
+                    else:
+                        return redirect('/formation')
             else:
-                return redirect('/formation')
+                form2 = SigninForm(request.POST)
+        else:
+            form = SignupForm(request.POST)
+            if form.is_valid():
+                user = form.save(commit=False)
+                user.set_Role('Participant')
+                user.save()
+                login(request, user,backend='django.contrib.auth.backends.ModelBackend')                
+                return JsonResponse({'success': True})
+            else:
+                field_errors = form.errors.as_json()
+                return JsonResponse({'success': False, 'field_errors': field_errors})
+    return render(request, 'front/signup.html', {'form': form, 'form2': form2})
 
-        if request.method == 'POST' and 'signup_submit' in request.POST:
-            email = request.POST.get('email')
-            pwd = request.POST.get('pwd')
-            nom = request.POST.get('nom')
-            prenom = request.POST.get('prenom')
-            cin = request.POST.get('cin')
-            org = request.POST.get('org')
-            
-            if not email or not pwd or not nom or not prenom or not cin or not org:
-                error_message = "Veuillez remplir tous les champs !"
-                return JsonResponse({'success': False, 'message': error_message})
-            
-            if Profile.objects.filter(email=email).exists():
-                error_message = "Un compte avec cet e-mail existe déjà."
-                return JsonResponse({'success': False, 'message': error_message})
-            
-            if Profile.objects.filter(cin=cin).exists():
-                error_message = "Un compte avec ce cin existe déjà."
-                return JsonResponse({'success': False, 'message': error_message})
 
-            try:
-                validate_email(email)
-            except ValidationError as e:
-                error_message = str(e)
-                return JsonResponse({'success': False, 'message': error_message})
-   
-            cin_regex = RegexValidator(regex=r'^\d{8}$', message="CIN contient 8 chiffres.")
-            try:
-                cin_regex(cin)
-            except ValidationError as e:
-                error_message = str(e)
-                return JsonResponse({'success': False, 'message': error_message})
-
-            user = Profile(email=email, first_name=nom, last_name=prenom, cin=cin, organisme=org, role='Participant',)
-            user.set_password(pwd)
-            user.save()
-
-            user_obj = authenticate(request, email=email, password=pwd)
-            login(request, user_obj)
-
-            return JsonResponse({'success': True, 'redirect_url': '/formation'})
-
-        if request.method == 'POST' and 'signin_submit' in request.POST:
-            email = request.POST.get('email')
-            pwd = request.POST.get('pwd')
-            user_obj = Profile.objects.filter(email=email)
-            if not user_obj.exists():
-                error_message = 'Vérifiez vos données'
-                return JsonResponse({'success': False, 'message': error_message})
-            
-            user_obj = authenticate(request, email=email, password=pwd)
-
-            if user_obj:
-                login(request, user_obj)
-                if user_obj.is_superuser:
-                    return JsonResponse({'success': True, 'redirect_url': '/admin'})
-                else:
-                    return JsonResponse({'success': True, 'redirect_url': '/formation'})
-
-            error_message = 'Mot de passe incorrect'
-            return JsonResponse({'success': False, 'message': error_message})
-
-        return render(request, 'front/signup.html')
-    except Exception as e:
-        print(e)
 
 @custom_login_required
 @staff_member_required

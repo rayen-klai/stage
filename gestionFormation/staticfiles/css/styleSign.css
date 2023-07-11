@@ -23,7 +23,7 @@ body {
 .container {
     position: relative;
     width: 850px;
-    height: 540px;
+    height: 650px;
     background-color: #FFF;
     box-shadow: 25px 30px 55px #5557;
     border-radius: 13px;
@@ -81,7 +81,9 @@ body {
         margin: 8px 0px;
         width: 100%;
     }
-
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
     input{
         width: 100%;
         padding: 12px ;
@@ -117,7 +119,7 @@ body {
     }
 
     button {
-        border-radius: 20px ;
+        border-radius: 30px ;
         border : 1px solid var(--grad-clr1) ;
         background: var(--grad-clr2);
         color : #FFF ; 
@@ -129,7 +131,7 @@ body {
     }
 
     .form-container button {
-        margin-top: 17px ;
+        margin-top: 27px ;
         transition: 80ms ease-in;
     }
 
@@ -153,7 +155,7 @@ body {
         cursor: pointer;
         position:  absolute ;
         left: 50% ;
-        top : 355px ; 
+        top : 423px ; 
         transform : translateX(-50%);
         width: 143.67px ;
         height: 40px ;

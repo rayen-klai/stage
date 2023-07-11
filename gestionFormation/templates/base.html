@@ -13,10 +13,9 @@
     <meta name="description"
         content="Flexy Admin Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework">
     <meta name="robots" content="noindex,nofollow">
-    <title>CNI espace admin</title>
+    <title>Espace admin</title>
     <link rel="canonical" href="https://www.wrappixel.com/templates/Flexy-admin-lite/" />
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/logo1.png'%}">
     <!-- Custom CSS -->
     <link href="{% static 'assets/libs/chartist/dist/chartist.min.css'%}" rel="stylesheet">
     <link href="{% static 'assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css'%}" rel="stylesheet">
@@ -60,16 +59,10 @@
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
                             <!-- Light Logo icon -->
-                            <img src="{% static 'assets/images/logo1.png'%}"  href="{% url 'acc' %}" alt="homepage" class="light-logo" />
                         </b>
                         <!--End Logo icon -->
                         <!-- Logo text -->
-                        <span class="logo-text">
-                            <!-- dark Logo text -->
-                            <img src="{% static 'assets/images/logo1.png'%}"  href="{% url 'acc' %}" alt="homepage" class="dark-logo" />
-                            <!-- Light Logo text -->
-                            <img src="{% static 'assets/images/logo1.png'%}"  href="{% url 'acc' %}"  class="light-logo" alt="homepage" />
-                        </span>
+                       
                     </a>
                     <!-- ============================================================== -->
                     <!-- End Logo -->
@@ -128,20 +121,43 @@
         <!-- ============================================================== -->
         <aside class="left-sidebar" data-sidebarbg="skin6">
             <!-- Sidebar scroll-->
-            <div class="scroll-sidebar">
+            <div class="scroll-sidebar"  >
                 <!-- Sidebar navigation-->
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav" >
                     <ul id="sidebarnav">
-                        
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                             href="{% url 'monprofil' %}" aria-expanded="false"><i
                                     class="mdi mdi-account-network"></i><span class="hide-menu">Profile</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                    <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="{% url 'index' %}" aria-expanded="false"><i class="mdi mdi-chair-school"></i><span
                                     class="hide-menu">Gestion des formations</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                            href="{% url 'indexUser' %}" aria-expanded="false"><i class="mdi mdi-human-male-female"></i><span
-                                    class="hide-menu">Gestion des utilisateurs</span></a></li>
+                                        <li class="sidebar-item">
+                                            <a class="sidebar-link waves-effect waves-dark sidebar-link"  href="{% url 'indexUser' 0 %}" aria-expanded="false"
+                                                onmouseover="showSubMenu()" onmouseout="hideSubMenu()">
+                                                <i class="mdi mdi-human-male-female"></i>
+                                                <span class="hide-menu">Gestion des utilisateurs</span>
+                                            </a>
+                                            <ul id="subMenu" class="sub-menu" onmouseover="showSubMenu()" onmouseout="hideSubMenu()">
+                                                <li class="sidebar-item">
+                                                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'indexUser' 'Admin' %}" aria-expanded="false">
+                                                        <i class="mdi mdi-account-key"></i>
+                                                        <span class="hide-menu">Admin</span>
+                                                    </a>
+                                                </li>
+                                                <li class="sidebar-item">
+                                                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'indexUser' 'Formateur' %}" aria-expanded="false">
+                                                        <i class="mdi mdi-human-male"></i>
+                                                        <span class="hide-menu">Formateur</span>
+                                                    </a>
+                                                </li>
+                                                <li class="sidebar-item">
+                                                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'indexUser' 'Participant' %}" aria-expanded="false">
+                                                        <i class="mdi mdi-account"></i>
+                                                        <span class="hide-menu">Participant</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
                     </ul>
 
                 </nav>
@@ -182,6 +198,26 @@
     <script src="{% static 'assets/libs/chartist/dist/chartist.min.js'%}"></script>
     <script src="{% static 'assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js'%}"></script>
     <script src="{% static 'dist/js/pages/dashboards/dashboard1.js'%}"></script>
+    <script>
+        function showSubMenu() {
+            var subMenu = document.getElementById("subMenu");
+            subMenu.style.display = "block";
+        }
+    
+        function hideSubMenu() {
+            var subMenu = document.getElementById("subMenu");
+            subMenu.style.display = "none";
+        }
+    </script>
+    <style>
+        .sub-menu {
+            display: none;
+        }
+    </style>
 </body>
-
+<div class="container copyright text-center mt-4">
+    <p>&copy; <span>Copyright</span> <strong class="px-1">CNI</strong> <span>Tous droits réservés</span></p>
+    <div class="credits">
+    </div>
+  </div>
 </html>

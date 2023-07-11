@@ -14,7 +14,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 import cv2
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
+def custom_login_required(function=None):
+    login_url = '/signup'  # Specify your custom login URL
+    redirect_field_name = ''  # Specify your custom redirect field name
+
+    return login_required(function, redirect_field_name=redirect_field_name, login_url=login_url)
 
 def validate_price(price_input):
     try:
@@ -23,11 +30,14 @@ def validate_price(price_input):
     except ValueError:
         return False
 
-
+@custom_login_required
+@staff_member_required
 def index(request):
     return render(request,'admin/formation/index.html', {'formations': formation.objects.all()})
 
 
+@custom_login_required
+@staff_member_required
 def new(request):
     if request.method == 'POST':
         titre = request.POST.get('titre')
@@ -64,9 +74,15 @@ def new(request):
 
     return render(request, 'admin/formation/new.html',{'users' : Profile.objects.all()})
 
+
+@custom_login_required
+@staff_member_required
 def update(request):
     return render(request,'admin/formation/update.html')
 
+
+@custom_login_required
+@staff_member_required
 def detaille(request,id):
     f = formation.objects.get(id=id)
     participants = f.participants  
