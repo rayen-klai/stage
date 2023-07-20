@@ -38,53 +38,55 @@
             </div>
             <div class="table-responsive p-0">
                 
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Formateur</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Formation</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre de place</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prix</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Periode</th>
-                      <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="tableBody">
-                    {% for f in formations %}
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="{{ f.formateur.img.url }}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{ f.formateur.last_name}} {{f.formateur.first_name}}</h6>
-                            <p class="text-xs text-secondary mb-0">{{f.formateur.email}}</p>
-                          </div>
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Formateur</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Formation</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre de place</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prix</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Période</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  {% for f in formations %}
+                  <tr>
+                    <td>
+                      {% if f.formateur %}
+                      <div class="d-flex px-2 py-1">
+                        <div>
+                          <img src="{{ f.formateur.img.url }}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                         </div>
-                      </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">{{f.titre}}</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        {{f.nbp}}
-                      </td>
-                      <td class="align-middle text-center">
-                        {{f.prx}}dt
-                      </td>
-                      <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">{{f.date_deb}} - {{f.date_fin}}</span>
-                      </td>
-                      <td style="text-align: center;">
-                        <a href="{% url 'detailleFormation' f.id %}" class="btn btn-outline-info btn-sm">Afficher</a> 
-                      </td>                    
-                        </div>     
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ f.formateur.last_name}} {{f.formateur.first_name}}</h6>
+                          <p class="text-xs text-secondary mb-0">{{f.formateur.email}}</p>
+                        </div>
+                      </div>
+                      {% else %}
+                      <p class="text-xs font-weight-bold mb-0">Le formateur n'existe pas.</p>
+                      {% endif %}
                     </td>
-                    
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">{{f.titre}}</p>
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                      {{f.nbp}}
+                    </td>
+                    <td class="align-middle text-center">
+                      {{f.prx}}dt
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{f.date_deb}} - {{f.date_fin}}</span>
+                    </td>
+                    <td style="text-align: center;">
+                      <a href="{% url 'detailleFormation' f.id %}" class="btn btn-outline-info btn-sm">Afficher</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
             </div>
           </div>
         </div>

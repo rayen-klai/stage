@@ -17,7 +17,9 @@
                     </ol>
                   </nav>
                 <h1 class="mb-0 fw-bold">Profile</h1> 
-            </div>    
+                
+            </div>  
+       
         </div>
     </div>
     <div class="row" id="mymodal{{user2.id}}">
@@ -86,12 +88,22 @@
                                     class="form-control form-control-line">
                             </div>
                         </div>
+                        {% if user2.role != 'Admin' %}
                         <div class="form-group">
-                            <label class="col-md-12">Mot de passe</label>
+                            <label class="col-md-12">Role</label>
                             <div class="col-md-12">
-                                <input type="password" value="password"  name="pwd" class="form-control form-control-line">
-                            </div>
+                                <select name="role" class="form-control form-control-line">
+                                    {% if user2.role == 'Formateur' %}
+                                    <option value="Participant">Participant</option>
+                                     <option value="Formateur" selected >Formateur</option>
+                                    {% else %}
+                                    <option value="Participant" selected>Participant</option>
+                                    <option value="Formateur"  >Formateur</option>
+                                    {% endif %}
+                                    </select>
+                             </div>
                         </div>
+{% endif %}
                         <div class="form-group">
                             <label for="file" class="form-control form-control-line">
                                 Changer photo de profil

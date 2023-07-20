@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filter %}
+{% block content %}
+<div class="page-wrapper">
+<div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="page-breadcrumb">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 d-flex align-items-center">
+                      <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-chair-school fs-4"></i></a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Gestion des formations></form></li>
+                    </ol>
+                  </nav>
+                <h1 class="mb-0 fw-bold">Liste des presences</h1> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="col-lg-8 col-xlg-9 col-md-7">
+            <div class="card-body">
+                <div class="table-responsive p-0">
+            
+                    <table class="table table-striped-custom">
+                      <thead>
+                        <tr align="center">
+                          <th colspan="2">
+                            <h6 class="mb-0 text-sm">Titre de formation : {{f.titre}}</h6>
+                            <select id="mySelect">
+                              {% for j in jours %}
+                              <option value="{{ j }}" {% if j == datecrnt %}selected{% endif %}>{{ j }}</option>
+                              {% endfor %}
+                            </select>                        
+                          </th>
+                        </tr>
+                        <tr>
+                          <th >Participant ({{ f.nbp }})</th>
+                          <th>Present</th>
+                        </tr>
+                      </thead>
+                      <form method="POST">
+                        {% csrf_token %}
+                        <tbody>
+                          {% for p in participant %}
+                          <tr>
+                            <td>{{p|get_p|get_nom}}</td>
+    
+                            {% if p|get_r == 1 %}
+                            <td ><input type="checkbox" name="presence" checked value="{{p|get_p|get_id}}"></td>
+                            {% else %}
+                            <td ><input type="checkbox" name="presence" value="{{p|get_p|get_id}}" ></td>
+                            {% endif %}
+                          </tr>
+                         {% endfor %}
+                        </tbody>
+                      </table>
+                      <br>
+                      <div align="center">
+                      <button type="submit"  name="prs" class="btn btn-success text-white responsive-button">Enregistrer</button>
+                    </form>
+                    </div>
+                </div>  
+            </div>
+          </div>
+        </div>
+      </div>
+      
+        <!-- Column -->
+    </div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+  var selectElement = document.getElementById('mySelect');
+  selectElement.addEventListener('change', function() {
+    var selectedValue = this.value;
+        window.location.href = '/admin/formation/presence/{{f.id}}/' + selectedValue;
+  });
+}); 
+</script>
+<style>
+    .table-bordered-vertically td,
+    .table-bordered-vertically th {
+        border-right: 1px solid #dee2e6;
+    }
+    .table-striped-custom tbody tr:nth-of-type(odd) td {
+        background-color: #f8f9fa;  /* Couleur pour les colonnes impaires */
+    }
+
+    .table-striped-custom tbody tr:nth-of-type(even) td {
+        background-color: #ffffff;  /* Couleur pour les colonnes paires */
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 600px;
+      height: 600px;
+
+}
+</style>
+
+{% endblock %}

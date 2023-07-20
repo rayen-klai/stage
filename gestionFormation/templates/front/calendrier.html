@@ -1,0 +1,189 @@
+{% extends 'baseclient.html' %}
+{% load static %}
+{% block content %}
+      
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+  
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+      </a>
+      <!-- Nav Menu -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{% url 'acc' %}"  style="color: #000000;">Home</a></li>
+          <li><a href="{% url 'nosformations' %}">Formations</b></a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav><!-- End Nav Menu -->
+      {% if user.is_authenticated %}
+      <header class="topbar" data-navbarbg="skin6">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <div class="navbar-header" data-logobg="skin6">
+                <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                        class="mdi mdi-menu"></i></a>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-collapse collapse navbar-transparent" id="navbarSupportedContent" data-navbarbg="skin5">
+              <!-- toggle and nav items -->
+              <!-- ============================================================== -->
+            
+              <!-- ============================================================== -->
+              <!-- Right side toggle and nav items -->
+              <!-- ============================================================== -->
+              <ul class="navbar-nav float-end">
+                  <!-- User profile and search -->
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="{{user.img.url}}" alt="user" class="rounded-circle" width="31">
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+                        {% if user.is_superuser %}
+                        <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                          Espace admin</a>
+                          {% endif %} 
+                          <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i> Mon Profile</a>
+                          <a class="dropdown-item" href="{% url 'calendar' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                            Espace formateur</a>                          <form method="post">
+                              {% csrf_token %}
+                              <a class="dropdown-item" href="{% url 'logoutt' %}">Deconnexion</a>
+                          </form>
+                      </ul>
+                  </li>
+                  <!-- User profile and search -->
+              </ul>
+          </div>
+          
+        </nav>
+    </header>
+      {% else %}
+      <a  href="{% url 'admin_login' %}" class="btn-getstarted" >Se connecter</a>
+      {% endif %}
+    </div>
+  </header><!-- End Header -->
+  <div class="container-fluid">
+
+    <section id="team" class="team">
+    
+        <div data-aos="fade" class="page-title">
+          
+            <nav class="breadcrumbs">
+              <div class="container">
+                <div class="row d-flex justify-content-center text-center">
+                    <div class="col-lg-8">
+                     
+                    </div>
+                  </div>
+                <ol>
+                  <li><a href="index.html">Home</a></li>
+                  <li class="current">Espace formateur</li>
+                </ol>
+              </div>
+            </nav>
+          </div><!-- End Page Title -->
+          <link href="{% static 'assets3/css/main.css'%}" rel="stylesheet">
+
+          <div class="row">
+                
+              <div class="col-lg-4 col-xlg-3 col-md-5">
+                  <br>
+              <br>
+              <h4 class="card-subtitle" align="center">Liste des formations en cours</h4>
+              <br>     
+                        {% for u in enc %}
+                        <div class="card">
+                            <div class="card-body"> 
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between participant-item2" href="#list-item-1" name={{u.id}}>
+                            <div class="d-flex px-2 py-1">
+                                
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h4 class="mb-0 text-sm">{{ u.titre }}</h4>
+                                    <br>
+                                    <p class="post-date">
+                                        <span class="widget-49-meeting-time">{{u.date_deb}} - {{u.date_fin}}</span>
+                                      </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <br>
+                        {% endfor %}
+                      
+              </div>
+              <!-- Column -->
+              <!-- Column -->
+              <div class="col-lg-8 col-xlg-9 col-md-7">
+                  <br>
+              <br>
+                  <div class="card">
+                      <div class="card-body">
+                        <div class="container">    
+                            <div class="col-md-12">    
+                                <div id='calendar'></div> 
+                            </div>  
+                </div>
+          
+                      </div>
+                  </div>
+              </div>
+              
+          </div>  
+          
+
+</div>
+
+</div>
+
+</section><!-- End Team Section -->
+</div>
+
+<div class="container copyright text-center mt-4">
+    <p>&copy; <span>Copyright</span> <strong class="px-1">CNI</strong> <span>Tous droits réservés</span></p>
+    <div class="credits">
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+        var calendar = $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            events: '/all_events',
+            selectable: true,
+            selectHelper: true,
+            editable: true,
+            eventLimit: true,
+            eventClick: function (event) {
+                var today = new Date();
+                var year = today.getFullYear(); // Get the current year (e.g., 2023)
+                var month = today.getMonth() + 1; // Get the current month (0-11, so adding 1 to get 1-12)
+                var day = today.getDate(); // Get the current day of the month (1-31)
+
+                // Format the date as "YYYY-MM-DD"
+                var formattedDate = year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+ 
+
+        var id = event.id;
+        var redirectUrl
+        if(event.end<today)
+            redirectUrl = '/espaceformateur/presence/' + id + '/' + event.start;
+        else
+            redirectUrl = '/espaceformateur/presence/' + id + '/' + formattedDate;
+
+        window.location.href = redirectUrl;
+            },
+        });
+    });
+</script>
+{% endblock %}
+<!------------------------------------->

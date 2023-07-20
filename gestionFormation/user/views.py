@@ -17,6 +17,8 @@ import cv2
 import os
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from .serializers import ProfileSerializer
+
 def custom_login_required(function=None):
     login_url = '/signup'  # Specify your custom login URL
     redirect_field_name = ''  # Specify your custom redirect field name
@@ -34,6 +36,9 @@ def index(request,x):
     else:
         users = Profile.objects.filter(role=x)
         return render(request, 'admin/user/index.html', {'users': users})
+    
+@custom_login_required
+@staff_member_required
 def profile(request,id):
     user2 = Profile.objects.get(id=id)    
     formations_list = formation.objects.all()
@@ -44,11 +49,17 @@ def profile(request,id):
                 matching_formations.append(form)
         else:
             participants = form.participants
-            if str(user2.id) in participants.keys() and participants[str(user2.id)] == 1:
+            if str(user2.id) in participants.keys() and participants[str(user2.id)] != 0:
                 matching_formations.append(form)
 
 
     if request.method == 'POST' and 'supprimer' in request.POST:
+        for fm in matching_formations:
+            if(user2.role == 'Formateur'):
+                fm.formateur = None 
+            else:
+                del fm.participants[str(id)]
+            fm.save()
         user2.delete()
         return render(request,'admin/user/index.html',{'users' : Profile.objects.all })
     
@@ -74,13 +85,12 @@ def profile(request,id):
 
     if request.method == 'POST' and 'modifier' in request.POST:
         email = request.POST.get('email')
-        pwd = request.POST.get('pwd')
         nom = request.POST.get('nom')
         prenom = request.POST.get('prenom')
         cin = request.POST.get('cin')
         org = request.POST.get('org')
-
-        if not email or not pwd or not nom or not prenom or not cin or not org:
+        role = request.POST.get('role')
+        if not email or not nom or not prenom or not cin or not org:
             messages.error(request, "Veuillez remplir tous les champs !")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         
@@ -101,14 +111,13 @@ def profile(request,id):
         user2.cin = cin 
         user2.org = org
         user2.email = email 
+        user2.role = role 
+
         file = request.FILES.get('file')
         
         if file:
             file_path = default_storage.save(file.name, file)
             user2.img = file_path
-
-        if pwd!='password':
-            user2.set_password(pwd)
         user2.save()
     return render(request,'admin/user/profile.html',{'user2' : user2 , 'formations' : matching_formations})
 
@@ -153,3 +162,4 @@ def addFormateur(request):
 def logoutf(request):
     logout(request)
     return redirect('admin')
+

@@ -1,0 +1,297 @@
+{% extends 'baseclient.html' %}
+{% load static %}
+{% block content %}
+      
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+  
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+      </a>
+      <!-- Nav Menu -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{% url 'acc' %}"  style="color: #000000;">Home</a></li>
+          <li><a href="{% url 'nosformations' %}">Formations</b></a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav><!-- End Nav Menu -->
+      {% if user.is_authenticated %}
+      <header class="topbar" data-navbarbg="skin6">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <div class="navbar-header" data-logobg="skin6">
+                <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                        class="mdi mdi-menu"></i></a>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-collapse collapse navbar-transparent" id="navbarSupportedContent" data-navbarbg="skin5">
+              <!-- toggle and nav items -->
+              <!-- ============================================================== -->
+            
+              <!-- ============================================================== -->
+              <!-- Right side toggle and nav items -->
+              <!-- ============================================================== -->
+              <ul class="navbar-nav float-end">
+                  <!-- User profile and search -->
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="{{user.img.url}}" alt="user" class="rounded-circle" width="31">
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+                        {% if user.is_superuser %}
+                        <a class="dropdown-item" href="{% url 'monprofil' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                          Espace admin</a>
+                          {% endif %}
+                        <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                              Mon Profile</a>
+                              {% if user.role == 'Participant' %}
+                              <a class="dropdown-item" href="{% url 'part' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                               Mes participations</a>
+                               {% elif user.role == 'Formateur' %}
+                               <a class="dropdown-item" href="{% url 'calendar' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                                Espace formateur</a>
+                               {% endif %}
+                             <form method="post">
+                              {% csrf_token %}
+                              <a class="dropdown-item" href="{% url 'logoutt' %}">
+                            Deconnexion</a>
+                          </form>
+
+                      </ul>
+                  </li>
+                  <!-- User profile and search -->
+              </ul>
+          </div>
+          
+        </nav>
+    </header>
+      {% else %}
+      <a  href="{% url 'admin_login' %}" class="btn-getstarted" >Se connecter</a>
+      {% endif %}
+    </div>
+  </header><!-- End Header -->
+  <div class="container-fluid">
+
+    <section id="team" class="team">
+    
+        <div data-aos="fade" class="page-title">
+          
+            <nav class="breadcrumbs">
+              <div class="container">
+                <div class="row d-flex justify-content-center text-center">
+                    <div class="col-lg-8">
+                     
+                    </div>
+                  </div>
+                <ol>
+                  <li><a href="index.html">Home</a></li>
+                  <li class="current">Espace formateur</li>
+                  <li class="current">Presence</li>
+
+                </ol>
+              </div>
+            </nav>
+          </div><!-- End Page Title -->
+          <div class="container">   
+            <br>    
+                </div>
+         <div align="center">
+            <div class="col-lg-8 col-xlg-9 col-md-7">
+                <br>
+            <br>
+            <div class="table-responsive p-0">
+            
+                <table class="table table-striped-custom">
+                  <thead>
+                    <tr align="center">
+                      <th colspan="5">
+                        <h6 class="mb-0 text-sm">Titre de formation : {{f.titre}}</h6>
+                        <h6 class="mb-0 text-sm">De : {{f.date_deb}} Jusqu'a : {{f.date_fin}}</h6>
+                        <h6 class="mb-0 text-sm">Formateur : {{f.formateur.last_name}} {{f.formateur.first_name}}</h6>                        
+                      </th>
+                    </tr>
+                    <tr align="center">
+                        <th colspan="5">Evaluation de la formation</th>
+                      </tr>
+                    <tr align="center">
+                      <th ></th>
+                      <th>😞</th>
+                      <th>😐</th>
+                      <th>😊</th>
+                      <th>😄</th>
+                    </tr>
+                  </thead>
+                  <form method="POST">
+                    {% csrf_token %}
+                    <tbody>
+                        <tr>
+                            <th colspan="5">Compétences techniques</th>
+                          </tr>     
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la maîtrise des compétences techniques liées à la formation.</h6></td>
+                        <td align="center"><div class="form-group"><input type="radio" name="r1" value="1"></div></td>
+                        <td align="center"><div class="form-group"><input type="radio" name="r1" value="2"></div></td>
+                        <td align="center"><div class="form-group"><input type="radio" name="r1" value="3"></div></td>
+                        <td align="center"><div class="form-group"><input type="radio" name="r1" value="4"></div></td>
+                      </tr>
+                       <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité à appliquer les connaissances acquises lors de la formation dans des situations pratiques.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r2" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r2" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r2" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r2" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <th colspan="5">Communication et présentation</th>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer les compétences de communication verbale et écrite du formateur.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r3" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r3" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r3" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r3" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la clarté et la qualité des présentations du formateur.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r4" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r4" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r4" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r4" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <th colspan="5">Interaction avec les participants</th>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité du formateur à encourager la participation active des participants.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r5" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r5" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r5" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r5" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité du formateur à bien organiser le contenu de la formation et à gérer efficacement le temps alloué.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r6" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r6" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r6" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r6" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <th colspan="5">Organisation et gestion du temps</th>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité à appliquer les connaissances acquises lors de la formation dans des situations pratiques.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r7" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r7" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r7" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r7" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité du formateur à bien organiser le contenu de la formation et à gérer efficacement le temps alloué.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r8" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r8" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r8" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r8" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <th colspan="5">Adaptabilité et réactivité</th>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la capacité du formateur à bien organiser le contenu de la formation et à gérer efficacement le temps alloué.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r9" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r9" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r9" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r9" value="4"></div></td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <h6 class="mb-0 text-sm">Évaluer la réactivité du formateur aux questions, préoccupations ou difficultés rencontrées par les participants.</h6></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r10" value="1"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r10" value="2"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r10" value="3"></div></td>
+                            <td align="center"><div class="form-group"><input type="radio" name="r10" value="4"></div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <br>
+                  {% if error_message %}
+                  <div class="error-message">
+                    {{ error_message }}
+                  </div>
+                {% endif %}
+                  <div align="center">
+                  <button type="submit"  class="btn btn-success text-white responsive-button">Evaluer</button>
+                </form>
+ 
+                </div>
+            </div>  
+    
+            </div>
+            
+        </div>  
+          
+  <style>
+    .table-bordered-vertically td,
+    .table-bordered-vertically th {
+        border-right: 1px solid #dee2e6;
+    }
+    .table-striped-custom tbody tr:nth-of-type(odd) td {
+        background-color: #f8f9fa;  /* Couleur pour les colonnes impaires */
+    }
+
+    .table-striped-custom tbody tr:nth-of-type(even) td {
+        background-color: #ffffff;  /* Couleur pour les colonnes paires */
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 600px;
+      height: 600px;
+
+}
+  .error-message {
+    color: red;
+  }
+
+</style>
+</div>
+
+<div class="container copyright text-center mt-4">
+    <p>&copy; <span>Copyright</span> <strong class="px-1">CNI</strong> <span>Tous droits réservés</span></p>
+    <div class="credits">
+    </div>
+  </div>
+  {% endblock %}
+  

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from ipaddress import summarize_address_range
 import os
 from django.shortcuts import redirect, render
@@ -16,6 +16,61 @@ from reportlab.lib.units import inch
 import cv2
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+import random
+from django.shortcuts import render
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.views import View
+from xhtml2pdf import pisa
+
+def render_to_pdf(template_src, context_dict={}):
+	template = get_template(template_src)
+	html  = template.render(context_dict)
+	result = BytesIO()
+	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return None
+
+
+
+#Opens up page as PDF
+class ViewPDF(View):
+	
+    def get(self, request,id, *args, **kwargs):
+        f  = formation.objects.get(id=id)
+        data = {
+            "f" : f,
+            "eval" : f.evaluation , 
+            }
+        pdf = render_to_pdf('front/pdf_template.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+
+#Automaticly downloads to PDF file
+class DownloadPDF(View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            "company": "Dennnis Ivanov Company",
+            "address": "123 Street name",
+            "city": "Vancouver",
+            "state": "WA",
+            "zipcode": "98663",
+
+
+            "phone": "555-555-2345",
+            "email": "youremail@dennisivy.com",
+            "website": "dennisivy.com",
+            }
+        pdf = render_to_pdf('front/pdf_template.html', data)
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "Invoice_%s.pdf" % ("12341231")
+        content = "attachment; filename=%s" % (filename)
+        response['Content-Disposition'] = content
+        return response
+
+
 
 def custom_login_required(function=None):
     login_url = '/signup'  # Specify your custom login URL
@@ -29,6 +84,61 @@ def validate_price(price_input):
         return True
     except ValueError:
         return False
+
+
+@staff_member_required
+@custom_login_required
+def presence2(request,id, date2):
+    today = date.today()
+    today = today.strftime("%Y-%m-%d")
+    if(date2==today):
+        affqr=True
+    else:
+        affqr = False
+
+
+    f = formation.objects.get(id=id)
+    date_deb = f.date_deb  # Date de début
+    date_fin = f.date_fin  # Date de fin
+    jours = []
+    current_date = date_deb
+    i = 0
+    j = 0
+    while current_date <= date_fin:
+        jours.append(str(current_date))
+        current_date += timedelta(days=1)
+        c = current_date.strftime("%Y-%m-%d")
+        if c == date2:
+            j = i
+        i += 1
+    
+    l = []
+    print(j)
+    for cle, valeur in f.participants.items():
+        print(valeur)
+        print(valeur[j])
+        l.append([Profile.objects.get(id=cle), valeur[j]])
+    if request.method == 'POST' and 'prs' in request.POST:
+        selected_values = request.POST.getlist('presence')
+        for key in f.participants:
+            if key in selected_values:
+                f.participants[key][j] = 1
+            else:
+                f.participants[key][j] = 0
+        f.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    
+    context = {
+        "jours": jours,
+        "datecrnt": date2,
+        "f": f,
+        "participant": l,
+        "affqr" : affqr, 
+        "jq" : j , 
+    }
+    return render(request, 'admin/formation/presence.html', context)
+
 
 @custom_login_required
 @staff_member_required
@@ -60,7 +170,7 @@ def new(request):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         frm = Profile.objects.get(id=id_formateur)
-
+        random_char = random.choice('abcdefghijklmnopqrstuvwxyz')
         nouvelle_formation = formation(
             titre=titre,
             nbp=nombre_place,
@@ -68,6 +178,7 @@ def new(request):
             date_deb=date_debut,
             date_fin=date_fin,
             formateur=frm,
+            qr= random_char,
         )
         nouvelle_formation.save()
         return redirect('index')
@@ -121,7 +232,9 @@ def detaille(request,id):
         cv2.imwrite(path,template)
 
     if request.method == 'POST' and 'btn_acc' in request.POST:
-        participants[request.POST.get('btn_acc')] = 1
+        nombre_jours = (f.date_fin - f.date_deb).days 
+        liste_zero = [0] * (nombre_jours + 1)
+        f.participants[request.POST.get('btn_acc')] = liste_zero 
         f.participants = participants
         f.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -162,5 +275,6 @@ def detaille(request,id):
         f.date_fin = date_fin
         f.save() 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-    return render(request,'admin/formation/detaille.html',{'f' : f , 'users' : Profile.objects.all(),'par_enatt' : participants_enatt , 'par_enc' : participants_enc , 'nbpd' : nbpd , 'nbpr' : nbpr})
+    jss = {1 : [1,1] , 2 : {20,5} } ; 
+    today =date.today().strftime("%Y-%m-%d")
+    return render(request,'admin/formation/detaille.html',{'f' : f , 'users' : Profile.objects.all(),'par_enatt' : participants_enatt , 'par_enc' : participants_enc , 'nbpd' : nbpd , 'nbpr' : nbpr , 'today' : today ,'jss' : jss})

@@ -48,7 +48,21 @@ INSTALLED_APPS = [
     'crispy_forms',
     'bootstrap4',
     'jsonview',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
 ]
+
+SITE_ID = 1
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.template.context_processors.request',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -158,3 +172,26 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'klairayen6997@gmail.com'
 EMAIL_HOST_PASSWORD = 'hwedqbmiqfobywiz'
+
+REST_AUTH_SERIALIZERS = {
+    "LOGIN_SERIALIZER" : "gestionFormation.serializers.newLoginSerializer",
+}
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True 
+ACOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
+USERNAME_REQUIRED = False
+ACCOUNT_MAIL_VERIFICATION = None
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False 
+ACCOUNT_USER_MODEL_USERNAME_FIELD =None 
+
+REST_FRAMEWORK  = {
+    'DEFAULT_AUTHENTICATION_CLASSES' : [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+ALLOWED_HOSTS = ['*']

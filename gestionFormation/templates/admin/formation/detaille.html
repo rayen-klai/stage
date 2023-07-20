@@ -21,13 +21,17 @@
                   <div class="col-6">
                     <div class="container">
                       <div class="row justify-content-end align-items-center">
-                        <div class="col-md-6">
+                        <div class="col-md-15">
                           <div class="input-group">
+                            <a href="{% url 'presence2' f.id today %}" class="btn btn-info text-white responsive-button">Liste des présences</a>
+                            <span style="margin-right: 10px;"></span> <!-- Ajout d'un espace de 10px -->
+                            <a id="downloadButton" href="{% url 'pdf_view' f.id %}" class="btn btn-warning text-white responsive-button">Les évaluations disponibles</a>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  
               
               </div>
           </div>
@@ -120,17 +124,20 @@
             <div class="col-lg-4 col-xlg-3 col-md-5">
                 <div class="card">
                     <div class="card-body">
-                        <center class="m-t-30"> 
-                            <h6 class="card-subtitle">Formateur</h6>
-                            <img src="{{ f.formateur.img.url }}"
-                                class="rounded-circle" width="150" />
+                      <center class="m-t-30"> 
+                        <h6 class="card-subtitle">Formateur</h6>
+                        {% if f.formateur %}
+                            <img src="{{ f.formateur.img.url }}" class="rounded-circle" width="150" />
                             <h4 class="card-title m-t-10"> {{f.formateur.last_name}} {{f.formateur.first_name}}</h4>
-                            <a  href="{% url 'profilUser' f.formateur.id %}" class="btn btn-outline-info btn-sm">Voir profile</a>
+                            <a href="{% url 'profilUser' f.formateur.id %}" class="btn btn-outline-info btn-sm">Voir profil</a>
                             <div class="row text-center justify-content-md-center">
-                              <br>
-                              {{nbpr}}/{{f.nbp}}
+                                <br>
+                                {{nbpr}}/{{f.nbp}}
                             </div>
-                        </center>
+                        {% else %}
+                            <p>Le formateur n'existe pas.</p>
+                        {% endif %}
+                    </center>                    
                     </div>
                     <div id="list-example" class="list-group">
                         <div class="form-outline mb-0">
@@ -153,8 +160,7 @@
                               <form method="post" action="{% url 'detailleFormation' f.id  %}">
                                 {% csrf_token %}
                                 <button type="submit" , class="btn btn-outline-success btn-sm" , value="{{u.id}}" , name="btn_ats" >Attestation</button>                                   
-                                <button type="submit" , class="btn btn-outline-danger btn-sm" , value="{{u.id}}" , name="btn_ret" >Retirer</button> 
-                                  
+                                <button type="submit" , class="btn btn-outline-danger btn-sm" , value="{{u.id}}" , name="btn_ret" >Retirer</button>                                  
                               </div>
                         </a>
                     </div>
@@ -206,6 +212,8 @@
             
             <!-- Column -->
         </div>
+        <div id="evaluationContent">
+        </div>
         <!-- Row -->
         <!-- ============================================================== -->
         <!-- End PAge Content -->
@@ -230,6 +238,7 @@
     <!-- ============================================================== -->
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <script>
 $(document).ready(function() {
   $('#inp2').on('input', function() {
@@ -263,5 +272,8 @@ $(document).ready(function() {
 });
 
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+
 
 {% endblock %}

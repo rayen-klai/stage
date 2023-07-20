@@ -61,8 +61,13 @@
                             {% endif %}
                           <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i>
                                 Mon Profile</a>
+                                {% if user.role == 'Participant' %}
                                 <a class="dropdown-item" href="{% url 'part' %}"><i class="ti-user m-r-5 m-l-5"></i>
                                  Mes participations</a>
+                                 {% elif user.role == 'Formateur' %}
+                                 <a class="dropdown-item" href="{% url 'calendar' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                                  Espace formateur</a>
+                                 {% endif %}
                                <form method="post">
                                 {% csrf_token %}
                                 <a class="dropdown-item" href="{% url 'logoutt' %}">
